@@ -1,0 +1,16 @@
+[package]
+name = "qpm_package"
+version = "0.1.0"
+edition = "2021"
+authors = [
+    "RedBrumbler <redbrumbler.official@gmail.com>"
+]
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+thiserror = "1.0"
+semver = { version = "1.0", features = ["serde"] }
+
+stopwatch = "0.0.7" # timing tests
+anyhow = "1.0"
