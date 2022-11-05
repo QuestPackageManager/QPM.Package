@@ -3,17 +3,6 @@ use serde::{Deserialize, Serialize};
 #[derive(Serialize, Deserialize, Clone, Debug, Hash, Eq, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct AdditionalPackageMetadata {
-    /// Copy a dependency from a location that is local to this root path instead of from a remote url
-    /// Technically just a dependency field
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub local_path: Option<String>,
-
-    /// By default if empty, true
-    /// If false, this mod dependency will NOT be included in the generated mod.json
-    /// Technically just a dependency field
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub include_qmod: Option<bool>,
-
     /// Whether or not the package is header only
     #[serde(skip_serializing_if = "Option::is_none")]
     pub headers_only: Option<bool>,
@@ -50,14 +39,6 @@ pub struct AdditionalPackageMetadata {
     /// Specify any additional files to be downloaded
     #[serde(skip_serializing_if = "Option::is_none")]
     pub extra_files: Option<Vec<String>>,
-
-    /// Whether or not the dependency is private and should be used in restore
-    /// Technically just a dependency field
-    #[serde(
-        skip_serializing_if = "Option::is_none",
-        rename(serialize = "private", deserialize = "private")
-    )]
-    pub is_private: Option<bool>,
 
     /// Additional Compile options to be used with this package
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -97,4 +78,32 @@ pub struct CompileOptions {
     /// Additional C flags to add.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub c_flags: Option<Vec<String>>,
+}
+
+// Modifies how a package should be restored in qpm.json
+#[derive(Serialize, Deserialize, Clone, Debug, Hash, Eq, PartialEq, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct PackageDependencyModifier {
+    /// Copy a dependency from a location that is local to this root path instead of from a remote url
+    /// Technically just a dependency field
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub local_path: Option<String>,
+
+    /// By default if empty, true
+    /// If false, this mod dependency will NOT be included in the generated mod.json
+    /// Technically just a dependency field
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub include_qmod: Option<bool>,
+
+    /// Specify any additional files to be downloaded
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub extra_files: Option<Vec<String>>,
+
+    /// Whether or not the dependency is private and should be used in restore
+    /// Technically just a dependency field
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        rename(serialize = "private", deserialize = "private")
+    )]
+    pub is_private: Option<bool>,
 }

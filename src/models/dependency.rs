@@ -20,11 +20,12 @@ pub struct SharedDependency {
     pub version: Version,
 }
 
+/// qpm.shared.json
 #[derive(Serialize, Deserialize, Clone, Debug, Hash, PartialEq, Eq)]
 #[allow(non_snake_case)]
 #[serde(rename_all = "camelCase")]
 pub struct SharedPackageConfig {
-    /// The packageconfig that is stored in qpm.json
+    /// The package config that is stored in qpm.json, copied
     pub config: PackageConfig,
     /// The dependencies as given by self.config.resolve()
     pub restored_dependencies: Vec<SharedDependency>,
