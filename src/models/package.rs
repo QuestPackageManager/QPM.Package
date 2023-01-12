@@ -3,10 +3,10 @@ use std::path::PathBuf;
 use semver::{Version, VersionReq};
 use serde::{Deserialize, Serialize};
 
-use super::extra::{AdditionalPackageMetadata, PackageDependencyModifier};
+use super::{extra::{AdditionalPackageMetadata, PackageDependencyModifier}, workspace::WorkspaceConfig};
 
 // qpm.json
-#[derive(Serialize, Deserialize, Clone, Debug, Hash, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
 #[allow(non_snake_case)]
 #[serde(rename_all = "camelCase")]
 pub struct PackageConfig {
@@ -14,6 +14,7 @@ pub struct PackageConfig {
     pub dependencies_dir: PathBuf,
     pub info: PackageMetadata,
     pub dependencies: Vec<PackageDependency>,
+    pub workspace: Option<WorkspaceConfig>
 }
 
 // qpm.json::info

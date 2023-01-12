@@ -21,7 +21,7 @@ pub struct SharedDependency {
 }
 
 /// qpm.shared.json
-#[derive(Serialize, Deserialize, Clone, Debug, Hash, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
 #[allow(non_snake_case)]
 #[serde(rename_all = "camelCase")]
 pub struct SharedPackageConfig {
