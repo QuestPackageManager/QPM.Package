@@ -47,6 +47,10 @@ pub struct AdditionalPackageMetadata {
     /// Sub folder to use from the downloaded repo / zip, so one repo can contain multiple packages
     #[serde(skip_serializing_if = "Option::is_none")]
     pub sub_folder: Option<String>,
+
+    /// Whether to generate the cmake files on restore
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub cmake: Option<String>
 }
 
 /// - compileOptions (QPM.Commands.SupportedPropertiesCommand+CompileOptionsProperty): Additional options for compilation and edits to compilation related files. - Supported in: package
