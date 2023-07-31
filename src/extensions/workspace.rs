@@ -1,10 +1,6 @@
-use std::{
-    collections::{hash_map::Entry, HashMap},
-};
+use std::collections::{btree_map::Entry, BTreeMap};
 
-use crate::models::{
-    workspace::{WorkspaceConfig, WorkspaceScript},
-};
+use crate::models::workspace::{WorkspaceConfig, WorkspaceScript};
 
 pub const BUILD_SCRIPT_NAME: &str = "build";
 pub const BUILD_DEBUG_SCRIPT_NAME: &str = "buildDebug";
@@ -24,22 +20,25 @@ macro_rules! scriptDefine {
 }
 
 pub trait WorkspaceConfigExtensions {
-    fn get_scripts(&self) -> &HashMap<String, WorkspaceScript>;
-    fn get_scripts_mut(&mut self) -> &mut HashMap<String, WorkspaceScript>;
+    fn get_scripts(&self) -> &BTreeMap<String, WorkspaceScript>;
+    fn get_scripts_mut(&mut self) -> &mut BTreeMap<String, WorkspaceScript>;
 
     scriptDefine!(get_build, get_build_mut, BUILD_SCRIPT_NAME);
-    scriptDefine!(get_build_debug, get_build_debug_mut, BUILD_DEBUG_SCRIPT_NAME);
+    scriptDefine!(
+        get_build_debug,
+        get_build_debug_mut,
+        BUILD_DEBUG_SCRIPT_NAME
+    );
     scriptDefine!(get_copy, get_copy_mut, COPY_SCRIPT_NAME);
     scriptDefine!(get_clean, get_clean_mut, CLEAN_SCRIPT_NAME);
-
 }
 
 impl WorkspaceConfigExtensions for WorkspaceConfig {
-    fn get_scripts(&self) -> &HashMap<String, WorkspaceScript> {
+    fn get_scripts(&self) -> &BTreeMap<String, WorkspaceScript> {
         &self.scripts
     }
 
-    fn get_scripts_mut(&mut self) -> &mut HashMap<String, WorkspaceScript> {
+    fn get_scripts_mut(&mut self) -> &mut BTreeMap<String, WorkspaceScript> {
         &mut self.scripts
     }
 }

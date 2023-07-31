@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{BTreeMap};
 
 use serde::{Serialize, Deserialize};
 
@@ -11,7 +11,7 @@ pub type WorkspaceScript = Vec<String>;
 #[serde(rename_all = "camelCase")]
 pub struct WorkspaceConfig {
     #[serde(default)]
-    pub scripts: HashMap<String, WorkspaceScript>,
+    pub scripts: BTreeMap<String, WorkspaceScript>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     pub ndk: Option<String>,
