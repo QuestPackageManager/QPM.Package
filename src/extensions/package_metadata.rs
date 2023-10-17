@@ -20,18 +20,12 @@ pub trait PackageMetadataExtensions {
 
 impl PackageMetadataExtensions for PackageMetadata {
     fn get_so_name(&self) -> PathBuf {
-        let ext = if self.additional_data.static_linking.unwrap_or(false) {
-            "a"
-        } else {
-            "so"
-        };
-
         self.additional_data
             .override_so_name
             .clone()
             .unwrap_or_else(|| {
                 format!(
-                    "lib{}_{}.{ext}",
+                    "lib{}_{}.so",
                     self.id,
                     self.version.to_string().replace('.', "_"),
                 )
@@ -55,24 +49,13 @@ impl PackageMetadataExtensions for PackageMetadata {
 
 impl PackageMetadataExtensions for SharedDependency {
     fn get_so_name(&self) -> PathBuf {
-        let ext = if self
-            .dependency
-            .additional_data
-            .static_linking
-            .unwrap_or(false)
-        {
-            "a"
-        } else {
-            "so"
-        };
-
         self.dependency
             .additional_data
             .override_so_name
             .clone()
             .unwrap_or_else(|| {
                 format!(
-                    "lib{}_{}.{ext}",
+                    "lib{}_{}.so",
                     self.dependency.id,
                     self.version.to_string().replace('.', "_"),
                 )
