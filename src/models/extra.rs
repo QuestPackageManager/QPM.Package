@@ -8,7 +8,9 @@ pub struct AdditionalPackageMetadata {
     pub headers_only: Option<bool>,
 
     /// Whether or not the package is statically linked
+    /// DEPRECATED
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[deprecated(since="0.2.0", note="Use static_link instead")]
     pub static_linking: Option<bool>,
 
     /// Whether to use the release or debug .so for linking
@@ -20,6 +22,10 @@ pub struct AdditionalPackageMetadata {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub so_link: Option<String>,
 
+    /// the link to the so file
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub static_link: Option<String>,
+
     /// the link to the debug .so file
     #[serde(skip_serializing_if = "Option::is_none")]
     pub debug_so_link: Option<String>,
@@ -27,6 +33,10 @@ pub struct AdditionalPackageMetadata {
     /// the overridden so file name
     #[serde(skip_serializing_if = "Option::is_none")]
     pub override_so_name: Option<String>,
+
+    /// the overridden static file name
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub override_static_name: Option<String>,
 
     /// the link to the qmod
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -84,6 +94,14 @@ pub struct CompileOptions {
     pub c_flags: Option<Vec<String>>,
 }
 
+#[derive(Serialize, Deserialize, Clone, Debug, Hash, Eq, PartialEq)]
+#[serde(rename_all = "camelCase")]
+pub enum DependencyLibType {
+    Shared, // shared
+    Static, // statically link
+    HeaderOnly // Only restore headers, don't link
+}
+
 // Modifies how a package should be restored in qpm.json
 #[derive(Serialize, Deserialize, Clone, Debug, Hash, Eq, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
@@ -110,4 +128,12 @@ pub struct PackageDependencyModifier {
         rename(serialize = "private", deserialize = "private")
     )]
     pub is_private: Option<bool>,
+
+    /// Specifies how to restore this dependency
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+    )]
+    pub lib_type: Option<DependencyLibType>,
+
+
 }

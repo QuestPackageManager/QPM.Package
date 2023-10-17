@@ -1,5 +1,6 @@
 use std::collections::{BTreeMap};
 
+use semver::{Version, VersionReq};
 use serde::{Serialize, Deserialize};
 
 pub type WorkspaceScript = Vec<String>;
@@ -13,8 +14,9 @@ pub struct WorkspaceConfig {
     #[serde(default)]
     pub scripts: BTreeMap<String, WorkspaceScript>,
 
+    /// NDK Version Range
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub ndk: Option<String>,
+    pub ndk: Option<VersionReq>,
 
 
 }

@@ -3,7 +3,10 @@ use std::path::PathBuf;
 use semver::{Version, VersionReq};
 use serde::{Deserialize, Serialize};
 
-use super::{extra::{AdditionalPackageMetadata, PackageDependencyModifier}, workspace::WorkspaceConfig};
+use super::{
+    extra::{AdditionalPackageMetadata, PackageDependencyModifier},
+    workspace::WorkspaceConfig,
+};
 
 // qpm.json
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
@@ -13,8 +16,9 @@ pub struct PackageConfig {
     pub shared_dir: PathBuf,
     pub dependencies_dir: PathBuf,
     pub info: PackageMetadata,
+    #[serde(default)]
+    pub workspace: Option<WorkspaceConfig>,
     pub dependencies: Vec<PackageDependency>,
-    pub workspace: Option<WorkspaceConfig>
 }
 
 // qpm.json::info
