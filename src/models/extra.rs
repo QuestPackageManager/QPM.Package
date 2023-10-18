@@ -13,11 +13,6 @@ pub struct AdditionalPackageMetadata {
     #[deprecated(since="0.2.0", note="Use static_link instead")]
     pub static_linking: Option<bool>,
 
-    /// Whether to use the release or debug .so for linking
-    /// Technically just a dependency field
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub use_release: Option<bool>,
-
     /// the link to the so file
     #[serde(skip_serializing_if = "Option::is_none")]
     pub so_link: Option<String>,
@@ -45,10 +40,6 @@ pub struct AdditionalPackageMetadata {
     /// Branch name of a Github repo. Only used when a valid github url is provided
     #[serde(skip_serializing_if = "Option::is_none")]
     pub branch_name: Option<String>,
-
-    /// Specify any additional files to be downloaded
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub extra_files: Option<Vec<String>>,
 
     /// Additional Compile options to be used with this package
     #[serde(skip_serializing_if = "Option::is_none")]
