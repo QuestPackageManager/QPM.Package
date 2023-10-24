@@ -8,16 +8,22 @@ use super::{
     workspace::WorkspaceConfig,
 };
 
+fn default_ver() -> VersionReq {
+    VersionReq::parse(">=0.1.0").expect("Unable to parse version")
+}
+
 // qpm.json
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
 #[allow(non_snake_case)]
 #[serde(rename_all = "camelCase")]
 pub struct PackageConfig {
+    #[serde(default = "default_ver")]
+    pub version: VersionReq,
     pub shared_dir: PathBuf,
     pub dependencies_dir: PathBuf,
     pub info: PackageMetadata,
     #[serde(default)]
-    pub workspace: Option<WorkspaceConfig>,
+    pub workspace: WorkspaceConfig,
     pub dependencies: Vec<PackageDependency>,
 }
 

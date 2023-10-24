@@ -7,7 +7,7 @@ pub type WorkspaceScript = Vec<String>;
 
 
 /// qpm.json::workspace
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Default)]
 #[allow(non_snake_case)]
 #[serde(rename_all = "camelCase")]
 pub struct WorkspaceConfig {
