@@ -28,6 +28,25 @@ pub struct PackageConfig {
     pub dependencies: Vec<PackageDependency>,
 }
 
+impl Default for PackageConfig {
+    fn default() -> Self {
+        Self {
+            version: default_ver(),
+            dependencies: Default::default(),
+            dependencies_dir: Default::default(),
+            info: PackageMetadata {
+                name: Default::default(),
+                id: Default::default(),
+                version: Version::new(1, 0, 0),
+                url: Default::default(),
+                additional_data: Default::default(),
+            },
+            shared_dir: Default::default(),
+            workspace: Default::default(),
+        }
+    }
+}
+
 // qpm.json::info
 #[derive(Serialize, Deserialize, Clone, Debug, Hash, Eq, PartialEq)]
 #[serde(rename_all = "camelCase")]
