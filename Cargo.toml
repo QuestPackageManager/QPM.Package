@@ -12,3 +12,7 @@ semver = { version = "1.0", features = ["serde"] }
 cursed-semver-parser = { git = "https://github.com/raftario/cursed-semver-parser.git", features = [
     "serde",
 ] }
+
+
+[build-dependencies]
+semver = { version = "1.0", features = ["serde"] }

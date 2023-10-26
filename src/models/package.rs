@@ -8,8 +8,9 @@ use super::{
     workspace::WorkspaceConfig,
 };
 
-fn default_ver() -> VersionReq {
-    VersionReq::parse(">=0.1.0").expect("Unable to parse version")
+fn default_ver() -> Version {
+    // This will be true since it is checked in build.rs
+    Version::parse(env!("CARGO_PKG_VERSION")).unwrap()
 }
 
 // qpm.json
@@ -18,7 +19,7 @@ fn default_ver() -> VersionReq {
 #[serde(rename_all = "camelCase")]
 pub struct PackageConfig {
     #[serde(default = "default_ver")]
-    pub version: VersionReq,
+    pub version: Version,
     pub shared_dir: PathBuf,
     pub dependencies_dir: PathBuf,
     pub info: PackageMetadata,

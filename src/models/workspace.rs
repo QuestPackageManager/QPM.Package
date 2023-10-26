@@ -1,6 +1,6 @@
 use std::collections::{BTreeMap};
 
-use semver::{Version, VersionReq};
+use semver::{VersionReq};
 use serde::{Serialize, Deserialize};
 
 pub type WorkspaceScript = Vec<String>;
