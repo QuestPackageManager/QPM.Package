@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
 use semver::{Version, VersionReq};
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize, Deserializer};
 
 use super::{
     extra::{AdditionalPackageMetadata, PackageDependencyModifier},
@@ -23,7 +23,8 @@ pub struct PackageConfig {
     pub shared_dir: PathBuf,
     pub dependencies_dir: PathBuf,
     pub info: PackageMetadata,
-    #[serde(default)]
+    // allow workspace to be null
+    #[serde(default, deserialize_with = "deserialize_null_default")]
     pub workspace: WorkspaceConfig,
     pub dependencies: Vec<PackageDependency>,
 }
@@ -66,4 +67,14 @@ pub struct PackageDependency {
     #[serde(deserialize_with = "cursed_semver_parser::deserialize")]
     pub version_range: VersionReq,
     pub additional_data: PackageDependencyModifier,
+}
+
+
+fn deserialize_null_default<'de, D, T>(deserializer: D) -> Result<T, D::Error>
+where
+    T: Default + Deserialize<'de>,
+    D: Deserializer<'de>,
+{
+    let opt = Option::deserialize(deserializer)?;
+    Ok(opt.unwrap_or_default())
 }
