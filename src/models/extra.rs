@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Clone, Debug, Hash, Eq, PartialEq, Default)]
@@ -51,7 +53,11 @@ pub struct AdditionalPackageMetadata {
 
     /// Whether to generate the cmake files on restore
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub cmake: Option<bool>
+    pub cmake: Option<bool>,
+
+    /// Whether to generate the a toolchain JSON file [CompileOptions] describing the project setup configuration
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub toolchain_out: Option<PathBuf>
 }
 
 /// - compileOptions (QPM.Commands.SupportedPropertiesCommand+CompileOptionsProperty): Additional options for compilation and edits to compilation related files. - Supported in: package
