@@ -74,6 +74,7 @@ pub struct CompileOptions {
 
     /// Additional C++ features to add.
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[deprecated(since="0.2.1", note="Unused and exclusive to CMake")]
     pub cpp_features: Option<Vec<String>>,
 
     /// Additional C++ flags to add.
