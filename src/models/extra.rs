@@ -9,12 +9,6 @@ pub struct AdditionalPackageMetadata {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub headers_only: Option<bool>,
 
-    /// Whether or not the package is statically linked
-    /// DEPRECATED
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[deprecated(since="0.2.0", note="Use static_link instead")]
-    pub static_linking: Option<bool>,
-
     /// the link to the so file
     #[serde(skip_serializing_if = "Option::is_none")]
     pub so_link: Option<String>,
@@ -23,17 +17,13 @@ pub struct AdditionalPackageMetadata {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub static_link: Option<String>,
 
-    /// the link to the debug .so file
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub debug_so_link: Option<String>,
-
     /// the overridden so file name
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub override_so_name: Option<String>,
+    pub dynamic_lib_out: Option<PathBuf>,
 
     /// the overridden static file name
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub override_static_name: Option<String>,
+    pub static_lib_out: Option<PathBuf>,
 
     /// the link to the qmod
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -57,7 +47,7 @@ pub struct AdditionalPackageMetadata {
 
     /// Whether to generate the a toolchain JSON file [CompileOptions] describing the project setup configuration
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub toolchain_out: Option<PathBuf>
+    pub toolchain_out: Option<PathBuf>,
 }
 
 /// - compileOptions (QPM.Commands.SupportedPropertiesCommand+CompileOptionsProperty): Additional options for compilation and edits to compilation related files. - Supported in: package
@@ -80,7 +70,7 @@ pub struct CompileOptions {
 
     /// Additional C++ features to add.
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[deprecated(since="0.2.1", note="Unused and exclusive to CMake")]
+    #[deprecated(since = "0.2.1", note = "Unused and exclusive to CMake")]
     pub cpp_features: Option<Vec<String>>,
 
     /// Additional C++ flags to add.
@@ -95,9 +85,9 @@ pub struct CompileOptions {
 #[derive(Serialize, Deserialize, Clone, Debug, Hash, Eq, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub enum DependencyLibType {
-    Shared, // shared
-    Static, // statically link
-    HeaderOnly // Only restore headers, don't link
+    Shared,     // shared
+    Static,     // statically link
+    HeaderOnly, // Only restore headers, don't link
 }
 
 // Modifies how a package should be restored in qpm.json
@@ -128,10 +118,6 @@ pub struct PackageDependencyModifier {
     pub is_private: Option<bool>,
 
     /// Specifies how to restore this dependency
-    #[serde(
-        skip_serializing_if = "Option::is_none",
-    )]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub lib_type: Option<DependencyLibType>,
-
-
 }
