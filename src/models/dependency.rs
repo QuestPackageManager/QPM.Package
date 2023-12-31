@@ -2,7 +2,7 @@ use semver::{Version, VersionReq};
 
 use serde::{Deserialize, Serialize};
 
-use super::{extra::AdditionalPackageMetadata, package::PackageConfig};
+use super::{extra::{AdditionalPackageMetadata, DependencyLibType}, package::PackageConfig};
 
 #[derive(Serialize, Deserialize, Clone, Debug, Hash, Eq, PartialEq)]
 #[serde(rename_all = "camelCase")]
@@ -18,6 +18,7 @@ pub struct Dependency {
 pub struct SharedDependency {
     pub dependency: Dependency,
     pub version: Version,
+    pub restored_lib_type: DependencyLibType,
 }
 
 /// qpm.shared.json
