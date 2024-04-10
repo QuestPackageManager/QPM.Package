@@ -1,10 +1,9 @@
 use std::{collections::BTreeMap, path::PathBuf};
 
 use semver::VersionReq;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 pub type WorkspaceScript = Vec<String>;
-
 
 /// qpm.json::workspace
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Default)]
@@ -18,6 +17,9 @@ pub struct WorkspaceConfig {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub ndk: Option<VersionReq>,
 
+    #[serde(default)]
     pub qmod_includes: Vec<PathBuf>,
-    pub qmod_output: Option<PathBuf>
+
+    #[serde(default)]
+    pub qmod_output: Option<PathBuf>,
 }
