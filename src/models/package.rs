@@ -8,9 +8,12 @@ use super::{
     workspace::WorkspaceConfig,
 };
 
+#[inline]
 fn default_ver() -> Version {
     Version::new(0,1,0)
 }
+
+#[inline]
 pub fn package_target_version() -> Version {
     // This will be safe since it is checked in build.rs
     Version::parse(env!("CARGO_PKG_VERSION")).unwrap()
