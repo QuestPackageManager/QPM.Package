@@ -18,7 +18,10 @@ pub struct WorkspaceConfig {
     pub ndk: Option<VersionReq>,
 
     #[serde(default)]
-    pub qmod_includes: Vec<PathBuf>,
+    pub qmod_include_dirs: Vec<PathBuf>,
+    
+    #[serde(default)]
+    pub qmod_include_files: Vec<PathBuf>,
 
     #[serde(default)]
     pub qmod_output: Option<PathBuf>,
