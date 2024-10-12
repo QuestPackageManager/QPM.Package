@@ -133,5 +133,8 @@ pub struct PackageDependencyModifier {
     )]
     pub lib_type: Option<DependencyLibType>,
 
-
+    /// whether the mod is optional or required. If omitted, assume Some(True)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "required")]
+    pub required: Option<bool>,
 }
