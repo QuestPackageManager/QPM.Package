@@ -10,9 +10,10 @@ use super::{
 
 #[inline]
 fn default_ver() -> Version {
-    Version::new(0,1,0)
+    Version::new(0,4,0)
 }
 
+/// latest version
 #[inline]
 pub fn package_target_version() -> Version {
     // This will be safe since it is checked in build.rs
