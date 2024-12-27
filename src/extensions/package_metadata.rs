@@ -3,13 +3,17 @@ use std::path::PathBuf;
 use crate::models::{dependency::SharedDependency, package::PackageMetadata};
 
 pub trait PackageMetadataExtensions {
+    #[deprecated = "Use get_so_name2 instead"]
     fn get_so_name(&self) -> PathBuf;
+    fn get_so_name2(&self) -> PathBuf;
 
+    #[deprecated = "Use get_static_name2 instead"]
     fn get_static_name(&self) -> PathBuf;
+    fn get_static_name2(&self) -> PathBuf;
 
     fn get_module_id(&self) -> String {
         let fixed_name = self
-            .get_so_name()
+            .get_so_name2()
             .with_extension("")
             .to_str()
             .unwrap()
@@ -20,6 +24,13 @@ pub trait PackageMetadataExtensions {
 
 impl PackageMetadataExtensions for PackageMetadata {
     fn get_so_name(&self) -> PathBuf {
+        self.get_so_name2()
+    }
+    fn get_static_name(&self) -> PathBuf {
+        self.get_static_name2()
+    }
+
+    fn get_so_name2(&self) -> PathBuf {
         self.additional_data
             .override_so_name
             .clone()
@@ -32,7 +43,8 @@ impl PackageMetadataExtensions for PackageMetadata {
             })
             .into()
     }
-    fn get_static_name(&self) -> PathBuf {
+
+    fn get_static_name2(&self) -> PathBuf {
         self.additional_data
             .override_static_name
             .clone()
@@ -75,5 +87,13 @@ impl PackageMetadataExtensions for SharedDependency {
                 )
             })
             .into()
+    }
+
+    fn get_so_name2(&self) -> PathBuf {
+        todo!()
+    }
+
+    fn get_static_name2(&self) -> PathBuf {
+        todo!()
     }
 }

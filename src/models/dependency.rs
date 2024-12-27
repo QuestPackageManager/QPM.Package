@@ -10,6 +10,9 @@ pub struct Dependency {
     pub id: String,
     #[serde(deserialize_with = "cursed_semver_parser::deserialize")]
     pub version_range: VersionReq,
+
+    // Should've been PackageDependencyModifier but oh well
+    #[deprecated = "Use PackageConfig additional_data instead"]
     pub additional_data: AdditionalPackageMetadata,
 }
 
