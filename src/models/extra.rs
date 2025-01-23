@@ -78,10 +78,6 @@ pub struct CompileOptions {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub system_includes: Option<Vec<String>>,
 
-    /// Additional include paths to add, relative to the project directory.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub project_includes: Option<Vec<String>>,
-
     /// Additional C++ features to add.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[deprecated(since="0.2.1", note="Unused and exclusive to CMake")]
