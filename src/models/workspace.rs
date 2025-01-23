@@ -17,6 +17,10 @@ pub struct WorkspaceConfig {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub ndk: Option<VersionReq>,
 
+    /// Additional include paths to add, relative to the project directory.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub additional_includes: Option<Vec<String>>,
+
     #[serde(default)]
     pub qmod_include_dirs: Vec<PathBuf>,
     
