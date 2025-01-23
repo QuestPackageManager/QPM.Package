@@ -84,6 +84,13 @@
           "type": ["string", "null"],
           "description": "NDK version range."
         },
+        "additionalIncludes": {
+          "type": ["array", "null"],
+          "description": "Additional include paths to add, relative to the project directory.",
+          "items": {
+            "type": "string"
+          }
+        },
         "qmodIncludeDirs": {
           "type": "array",
           "description": "List of directories to search during qmod creation.",
@@ -195,13 +202,6 @@
         "systemIncludes": {
           "type": ["array", "null"],
           "description": "Additional system include paths to add, relative to the extern directory.",
-          "items": {
-            "type": "string"
-          }
-        },
-        "projectIncludes": {
-          "type": ["array", "null"],
-          "description": "Additional include paths to add, relative to the project directory.",
           "items": {
             "type": "string"
           }
