@@ -1,9 +1,8 @@
 use std::{collections::BTreeMap, path::PathBuf};
 
 use schemars::JsonSchema;
+use semver::VersionReq;
 use serde::{Deserialize, Serialize};
-
-use super::schema_impls::VersionReqWrapper;
 
 pub type WorkspaceScript = Vec<String>;
 
@@ -20,7 +19,7 @@ pub struct WorkspaceConfig {
     /// NDK Version Range
     #[serde(skip_serializing_if = "Option::is_none")]
     #[schemars(description = "The NDK version range.")]
-    pub ndk: Option<VersionReqWrapper>,
+    pub ndk: Option<VersionReq>,
 
     #[serde(default)]
     #[schemars(description = "List of directories to search during qmod creation.")]

@@ -1,16 +1,17 @@
-use schemars::{gen::SchemaGenerator, schema::Schema, JsonSchema};
+use schemars::JsonSchema;
+use semver::VersionReq;
 use serde::{Deserialize, Serialize};
 
-use super::{extra::AdditionalPackageMetadata, package::PackageConfig, schema_impls::VersionReqWrapper, schema_impls::deserialize_version_req_wrapper};
+use super::{extra::AdditionalPackageMetadata, package::PackageConfig};
 
 #[derive(Serialize, Deserialize, JsonSchema, Clone, Debug, Hash, Eq, PartialEq)]
 #[serde(rename_all = "camelCase")]
 #[schemars(description = "A dependency of the package.")]
 pub struct Dependency {
     pub id: String,
-    #[serde(deserialize_with = "deserialize_version_req_wrapper")]
+    #[serde(deserialize_with = "cursed_semver_parser::deserialize")]
     #[schemars(description = "The version range of the dependency")]
-    pub version_range: VersionReqWrapper,
+    pub version_range: VersionReq,
 
     // Should've been PackageDependencyModifier but oh well
     #[deprecated = "Use PackageConfig additional_data instead"]
@@ -26,7 +27,7 @@ pub struct SharedDependency {
     pub dependency: Dependency,
 
     #[schemars(description = "The resolved version of the dependency")]
-    pub version: VersionReqWrapper,
+    pub version: VersionReq,
 }
 
 /// qpm.shared.json

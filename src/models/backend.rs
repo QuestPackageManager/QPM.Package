@@ -1,6 +1,6 @@
 use schemars::JsonSchema;
+use semver::Version;
 use serde::{Serialize, Deserialize};
-use crate::models::schema_impls::VersionWrapper;
 
 #[derive(Serialize, Deserialize, JsonSchema, Clone, Debug, Hash, PartialEq, Eq)]
 #[allow(non_snake_case)]
@@ -11,5 +11,5 @@ pub struct PackageVersion {
     pub id: String,
 
     #[schemars(description = "The version of the package.")]
-    pub version: VersionWrapper,
+    pub version: Version,
 }

@@ -1,23 +1,17 @@
 use std::path::PathBuf;
 
-use semver::Version;
+use semver::{Version, VersionReq};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize, Deserializer};
 
 use super::{
-    extra::{AdditionalPackageMetadata, PackageDependencyModifier}, schema_impls::{VersionReqWrapper, VersionWrapper, deserialize_version_req_wrapper}, workspace::WorkspaceConfig
+    extra::{AdditionalPackageMetadata, PackageDependencyModifier}, workspace::WorkspaceConfig
 };
-
-#[inline]
-fn default_ver() -> VersionWrapper {
-    VersionWrapper(Version::new(0,4,0))
-}
 
 /// latest version
 #[inline]
-pub fn package_target_version() -> Version {
-    // This will be safe since it is checked in build.rs
-    Version::parse(env!("CARGO_PKG_VERSION")).unwrap()
+fn default_ver() -> Version {
+    Version::new(0,4,0)
 }
 
 // qpm.json
@@ -28,7 +22,7 @@ pub fn package_target_version() -> Version {
 pub struct PackageConfig {
     #[serde(default = "default_ver")]
     #[schemars(description = "The version of the package configuration.")]
-    pub version: VersionWrapper,
+    pub version: Version,
 
     #[schemars(description = "The directory where shared files are stored.")]
     pub shared_dir: PathBuf,
@@ -56,7 +50,7 @@ impl Default for PackageConfig {
             info: PackageMetadata {
                 name: Default::default(),
                 id: Default::default(),
-                version: VersionWrapper(Version::new(1, 0, 0)),
+                version: Version::new(1, 0, 0),
                 url: Default::default(),
                 additional_data: Default::default(),
             },
@@ -78,7 +72,7 @@ pub struct PackageMetadata {
     pub id: String,
 
     #[schemars(description = "The version of the package.")]
-    pub version: VersionWrapper,
+    pub version: Version,
 
     #[schemars(description = "The website for the package.")]
     pub url: Option<String>,
@@ -95,9 +89,9 @@ pub struct PackageDependency {
     #[schemars(description = "The unique identifier of the dependency")]
     pub id: String,
 
-    #[serde(deserialize_with = "deserialize_version_req_wrapper")]
+    #[serde(deserialize_with = "cursed_semver_parser::deserialize")]
     #[schemars(description = "The version range of the dependency")]
-    pub version_range: VersionReqWrapper,
+    pub version_range: VersionReq,
 
     #[schemars(description = "Additional metadata for the dependency")]
     pub additional_data: PackageDependencyModifier,
