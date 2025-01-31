@@ -79,7 +79,7 @@ impl JsonSchema for VersionReqWrapper {
 /// # Returns
 ///
 /// A `Result` containing the deserialized `VersionReqWrapper` or an error.
-pub fn deserialize_version_req_wrapper<'de, D>(deserializer: D) -> Result<VersionReqWrapper, D::Error>
+pub(crate) fn deserialize_version_req_wrapper<'de, D>(deserializer: D) -> Result<VersionReqWrapper, D::Error>
 where
     D: Deserializer<'de>,
 {
