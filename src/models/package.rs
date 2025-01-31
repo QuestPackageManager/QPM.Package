@@ -1,16 +1,16 @@
 use std::path::PathBuf;
 
-use semver::{Version, VersionReq};
+use semver::Version;
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize, Deserializer};
 
 use super::{
-    extra::{AdditionalPackageMetadata, PackageDependencyModifier},
-    workspace::WorkspaceConfig,
+    extra::{AdditionalPackageMetadata, PackageDependencyModifier}, schema_impls::{VersionReqWrapper, VersionWrapper, deserialize_version_req_wrapper}, workspace::WorkspaceConfig
 };
 
 #[inline]
-fn default_ver() -> Version {
-    Version::new(0,4,0)
+fn default_ver() -> VersionWrapper {
+    VersionWrapper(Version::new(0,4,0))
 }
 
 /// latest version
@@ -21,18 +21,29 @@ pub fn package_target_version() -> Version {
 }
 
 // qpm.json
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, JsonSchema, Clone, Debug, PartialEq, Eq)]
 #[allow(non_snake_case)]
 #[serde(rename_all = "camelCase")]
+#[schemars(description = "Configuration for a package.")]
 pub struct PackageConfig {
     #[serde(default = "default_ver")]
-    pub version: Version,
+    #[schemars(description = "The version of the package configuration.")]
+    pub version: VersionWrapper,
+
+    #[schemars(description = "The directory where shared files are stored.")]
     pub shared_dir: PathBuf,
+
+    #[schemars(description = "The directory where dependencies are stored.")]
     pub dependencies_dir: PathBuf,
+
+    #[schemars(description = "The package metadata.")]
     pub info: PackageMetadata,
     // allow workspace to be null
     #[serde(default, deserialize_with = "deserialize_null_default")]
+    #[schemars(description = "The workspace configuration.")]
     pub workspace: WorkspaceConfig,
+
+    #[schemars(description = "The dependencies of the package.")]
     pub dependencies: Vec<PackageDependency>,
 }
 
@@ -45,7 +56,7 @@ impl Default for PackageConfig {
             info: PackageMetadata {
                 name: Default::default(),
                 id: Default::default(),
-                version: Version::new(1, 0, 0),
+                version: VersionWrapper(Version::new(1, 0, 0)),
                 url: Default::default(),
                 additional_data: Default::default(),
             },
@@ -56,23 +67,32 @@ impl Default for PackageConfig {
 }
 
 // qpm.json::info
-#[derive(Serialize, Deserialize, Clone, Debug, Hash, Eq, PartialEq)]
+#[derive(Serialize, Deserialize, JsonSchema, Clone, Debug, Hash, Eq, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct PackageMetadata {
+    #[schemars(description = "The name of the package.")]
     pub name: String,
+
+    #[schemars(description = "The unique identifier of the package.")]
     pub id: String,
-    pub version: Version,
+
+    #[schemars(description = "The version of the package.")]
+    pub version: VersionWrapper,
+
+    #[schemars(description = "The website for the package.")]
     pub url: Option<String>,
+
+    #[schemars(description = "Additional metadata for the package.")]
     pub additional_data: AdditionalPackageMetadata,
 }
 
 // qpm.json::dependencies[]
-#[derive(Serialize, Deserialize, Clone, Debug, Hash, Eq, PartialEq)]
+#[derive(Serialize, Deserialize, JsonSchema, Clone, Debug, Hash, Eq, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct PackageDependency {
     pub id: String,
-    #[serde(deserialize_with = "cursed_semver_parser::deserialize")]
-    pub version_range: VersionReq,
+    #[serde(deserialize_with = "deserialize_version_req_wrapper")]
+    pub version_range: VersionReqWrapper,
     pub additional_data: PackageDependencyModifier,
 }
 

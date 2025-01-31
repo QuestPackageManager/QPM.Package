@@ -1,8 +1,9 @@
 use std::path::PathBuf;
 
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Clone, Debug, Hash, Eq, PartialEq, Default)]
+#[derive(Serialize, Deserialize, JsonSchema, Clone, Debug, Hash, Eq, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct AdditionalPackageMetadata {
     /// Whether or not the package is header only
@@ -67,7 +68,7 @@ pub struct AdditionalPackageMetadata {
 /// - cppFeatures - OPTIONAL (System.String[]): Additional C++ features to add.
 /// - cppFlags - OPTIONAL (System.String[]): Additional C++ flags to add.
 /// - cFlags - OPTIONAL (System.String[]): Additional C flags to add.
-#[derive(Serialize, Deserialize, Default, Clone, Debug, Hash, Eq, PartialEq)]
+#[derive(Serialize, Deserialize, JsonSchema, Default, Clone, Debug, Hash, Eq, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct CompileOptions {
     /// Additional include paths to add, relative to the extern directory.
@@ -92,7 +93,7 @@ pub struct CompileOptions {
     pub c_flags: Option<Vec<String>>,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, Hash, Eq, PartialEq)]
+#[derive(Serialize, Deserialize, JsonSchema, Clone, Debug, Hash, Eq, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub enum DependencyLibType {
     Shared, // shared
@@ -101,7 +102,7 @@ pub enum DependencyLibType {
 }
 
 // Modifies how a package should be restored in qpm.json
-#[derive(Serialize, Deserialize, Clone, Debug, Hash, Eq, PartialEq, Default)]
+#[derive(Serialize, Deserialize, JsonSchema, Clone, Debug, Hash, Eq, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct PackageDependencyModifier {
     /// Copy a dependency from a location that is local to this root path instead of from a remote url

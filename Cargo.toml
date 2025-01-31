@@ -12,7 +12,12 @@ semver = { version = "1.0", features = ["serde"] }
 cursed-semver-parser = { git = "https://github.com/raftario/cursed-semver-parser.git", features = [
     "serde",
 ] }
+schemars = "0.8.21"
 
 
 [build-dependencies]
 semver = { version = "1.0", features = ["serde"] }
+
+[[bin]]
+name = "gen-schema"
+path = "src/gen-schema.rs"
