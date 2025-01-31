@@ -1,0 +1,260 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PackageConfig",
+  "description": "Configuration for a package in qpm.json",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "default": "0.4.0",
+      "description": "The version of the package configuration."
+    },
+    "sharedDir": {
+      "type": "string",
+      "default": "shared",
+      "description": "The directory for shared resources."
+    },
+    "dependenciesDir": {
+      "type": "string",
+      "default": "extern",
+      "description": "The directory for dependencies."
+    },
+    "info": {
+      "$ref": "#/definitions/PackageMetadata",
+      "description": "Metadata information about the package."
+    },
+    "workspace": {
+      "$ref": "#/definitions/WorkspaceConfig",
+      "description": "Configuration for the workspace."
+    },
+    "dependencies": {
+      "type": "array",
+      "description": "List of package dependencies.",
+      "items": {
+        "$ref": "#/definitions/PackageDependency"
+      }
+    }
+  },
+  "required": ["version", "sharedDir", "dependenciesDir", "info", "workspace", "dependencies"],
+  "definitions": {
+    "PackageMetadata": {
+      "type": "object",
+      "description": "Metadata information about the package.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the package."
+        },
+        "id": {
+          "type": "string",
+          "description": "The unique identifier of the package."
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "description": "The version of the package."
+        },
+        "url": {
+          "type": ["string", "null"],
+          "description": "The website for the package."
+        },
+        "additionalData": {
+          "$ref": "#/definitions/AdditionalPackageMetadata",
+          "description": "Additional metadata for the package."
+        }
+      },
+      "required": ["name", "id", "version", "additionalData"]
+    },
+    "WorkspaceConfig": {
+      "type": "object",
+      "description": "Configuration for the workspace.",
+      "properties": {
+        "scripts": {
+          "type": "object",
+          "description": "Scripts associated with the workspace.",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "ndk": {
+          "type": ["string", "null"],
+          "description": "NDK version range."
+        },
+        "qmodIncludeDirs": {
+          "type": "array",
+          "description": "List of directories to search during qmod creation.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "qmodIncludeFiles": {
+          "type": "array",
+          "description": "List of files to include in the resulting qmod.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "qmodOutput": {
+          "type": ["string", "null"],
+          "description": "Output path for the qmod."
+        }
+      }
+    },
+    "PackageDependency": {
+      "type": "object",
+      "description": "A dependency of the package.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The unique identifier of the dependency."
+        },
+        "versionRange": {
+          "type": "string",
+          "description": "The version range of the dependency."
+        },
+        "additionalData": {
+          "$ref": "#/definitions/PackageDependencyModifier",
+          "description": "Additional data for the dependency."
+        }
+      },
+      "required": ["id", "versionRange", "additionalData"]
+    },
+    "AdditionalPackageMetadata": {
+      "type": "object",
+      "description": "Additional metadata for the package.",
+      "properties": {
+        "headersOnly": {
+          "type": ["boolean", "null"],
+          "description": "Whether the package is header only."
+        },
+        "staticLinking": {
+          "type": ["boolean", "null"],
+          "description": "Whether the package is statically linked. Deprecated, use staticLink instead."
+        },
+        "soLink": {
+          "type": ["string", "null"],
+          "description": "The link to the shared object file."
+        },
+        "staticLink": {
+          "type": ["string", "null"],
+          "description": "The link to the static library file."
+        },
+        "debugSoLink": {
+          "type": ["string", "null"],
+          "description": "The link to the debug shared object file."
+        },
+        "overrideSoName": {
+          "type": ["string", "null"],
+          "description": "The overridden name for the shared object file."
+        },
+        "overrideStaticName": {
+          "type": ["string", "null"],
+          "description": "The overridden name for the static library file."
+        },
+        "modLink": {
+          "type": ["string", "null"],
+          "description": "The link to the qmod file."
+        },
+        "branchName": {
+          "type": ["string", "null"],
+          "description": "The branch name of a GitHub repository."
+        },
+        "compileOptions": {
+          "$ref": "#/definitions/CompileOptions",
+          "description": "Additional compile options for the package."
+        },
+        "subFolder": {
+          "type": ["string", "null"],
+          "description": "Sub-folder to use from the downloaded repository or zip."
+        },
+        "cmake": {
+          "type": ["boolean", "null"],
+          "description": "Whether to generate CMake files on restore."
+        },
+        "toolchainOut": {
+          "type": ["string", "null"],
+          "description": "Path to generate a toolchain JSON file describing the project setup configuration."
+        }
+      }
+    },
+    "CompileOptions": {
+      "type": "object",
+      "description": "Additional options for compilation and edits to compilation related files.",
+      "properties": {
+        "includePaths": {
+          "type": ["array", "null"],
+          "description": "Additional include paths to add, relative to the extern directory.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "systemIncludes": {
+          "type": ["array", "null"],
+          "description": "Additional system include paths to add, relative to the extern directory.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "cppFeatures": {
+          "type": ["array", "null"],
+          "description": "Additional C++ features to add. Deprecated, unused and exclusive to CMake.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "cppFlags": {
+          "type": ["array", "null"],
+          "description": "Additional C++ flags to add.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "cFlags": {
+          "type": ["array", "null"],
+          "description": "Additional C flags to add.",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "PackageDependencyModifier": {
+      "type": "object",
+      "description": "Modifies how a package should be restored in qpm.json.",
+      "properties": {
+        "localPath": {
+          "type": ["string", "null"],
+          "description": "Copy a dependency from a location that is local to this root path instead of from a remote URL."
+        },
+        "includeQmod": {
+          "type": ["boolean", "null"],
+          "description": "If false, this mod dependency will NOT be included in the generated mod.json. Default is true."
+        },
+        "extraFiles": {
+          "type": ["array", "null"],
+          "description": "Specify any additional files to be downloaded.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "isPrivate": {
+          "type": ["boolean", "null"],
+          "description": "Whether or not the dependency is private and should be used in restore."
+        },
+        "libType": {
+          "type": ["string", "null"],
+          "description": "Specifies how to restore this dependency.",
+          "enum": ["Shared", "Static", "HeaderOnly"]
+        },
+        "required": {
+          "type": ["boolean", "null"],
+          "description": "Whether the mod is optional or required. If omitted, assume true."
+        }
+      }
+    }
+  }
+}
