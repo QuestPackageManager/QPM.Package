@@ -7,6 +7,9 @@ use crate::models::schema_impls::VersionWrapper;
 #[serde(rename_all = "camelCase")]
 #[schemars(description = "The package version")]
 pub struct PackageVersion {
+    #[schemars(description = "The unique identifier of the package.")]
     pub id: String,
+
+    #[schemars(description = "The version of the package.")]
     pub version: VersionWrapper,
 }

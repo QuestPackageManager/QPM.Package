@@ -1,60 +1,27 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "PackageConfig",
-  "description": "Configuration for a package.",
+  "title": "SharedPackageConfig",
+  "description": "Shared package configuration.",
   "type": "object",
   "required": [
-    "dependencies",
-    "dependenciesDir",
-    "info",
-    "sharedDir"
+    "config",
+    "restoredDependencies"
   ],
   "properties": {
-    "dependencies": {
-      "description": "The dependencies of the package.",
+    "config": {
+      "description": "A copy of the package configuration stored in qpm.json for convenience.",
+      "allOf": [
+        {
+          "$ref": "#/definitions/PackageConfig"
+        }
+      ]
+    },
+    "restoredDependencies": {
+      "description": "The resolved dependencies of the package.",
       "type": "array",
       "items": {
-        "$ref": "#/definitions/PackageDependency"
+        "$ref": "#/definitions/SharedDependency"
       }
-    },
-    "dependenciesDir": {
-      "description": "The directory where dependencies are stored.",
-      "type": "string"
-    },
-    "info": {
-      "description": "The package metadata.",
-      "allOf": [
-        {
-          "$ref": "#/definitions/PackageMetadata"
-        }
-      ]
-    },
-    "sharedDir": {
-      "description": "The directory where shared files are stored.",
-      "type": "string"
-    },
-    "version": {
-      "description": "The version of the package configuration.",
-      "default": "0.4.0",
-      "allOf": [
-        {
-          "$ref": "#/definitions/Version"
-        }
-      ]
-    },
-    "workspace": {
-      "description": "The workspace configuration.",
-      "default": {
-        "qmodIncludeDirs": [],
-        "qmodIncludeFiles": [],
-        "qmodOutput": null,
-        "scripts": {}
-      },
-      "allOf": [
-        {
-          "$ref": "#/definitions/WorkspaceConfig"
-        }
-      ]
     }
   },
   "definitions": {
@@ -217,6 +184,37 @@
         }
       }
     },
+    "Dependency": {
+      "description": "A dependency of the package.",
+      "type": "object",
+      "required": [
+        "additionalData",
+        "id",
+        "versionRange"
+      ],
+      "properties": {
+        "additionalData": {
+          "description": "Additional metadata for the dependency. Deprecated, use packageConfig.additionalData instead.",
+          "deprecated": true,
+          "allOf": [
+            {
+              "$ref": "#/definitions/AdditionalPackageMetadata"
+            }
+          ]
+        },
+        "id": {
+          "type": "string"
+        },
+        "versionRange": {
+          "description": "The version range of the dependency",
+          "allOf": [
+            {
+              "$ref": "#/definitions/VersionReq"
+            }
+          ]
+        }
+      }
+    },
     "DependencyLibType": {
       "description": "Describes the dependency type.",
       "oneOf": [
@@ -242,6 +240,64 @@
           ]
         }
       ]
+    },
+    "PackageConfig": {
+      "description": "Configuration for a package.",
+      "type": "object",
+      "required": [
+        "dependencies",
+        "dependenciesDir",
+        "info",
+        "sharedDir"
+      ],
+      "properties": {
+        "dependencies": {
+          "description": "The dependencies of the package.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PackageDependency"
+          }
+        },
+        "dependenciesDir": {
+          "description": "The directory where dependencies are stored.",
+          "type": "string"
+        },
+        "info": {
+          "description": "The package metadata.",
+          "allOf": [
+            {
+              "$ref": "#/definitions/PackageMetadata"
+            }
+          ]
+        },
+        "sharedDir": {
+          "description": "The directory where shared files are stored.",
+          "type": "string"
+        },
+        "version": {
+          "description": "The version of the package configuration.",
+          "default": "0.4.0",
+          "allOf": [
+            {
+              "$ref": "#/definitions/Version"
+            }
+          ]
+        },
+        "workspace": {
+          "description": "The workspace configuration.",
+          "default": {
+            "qmodIncludeDirs": [],
+            "qmodIncludeFiles": [],
+            "qmodOutput": null,
+            "scripts": {}
+          },
+          "allOf": [
+            {
+              "$ref": "#/definitions/WorkspaceConfig"
+            }
+          ]
+        }
+      }
     },
     "PackageDependency": {
       "description": "A dependency of the package.",
@@ -367,6 +423,32 @@
           "allOf": [
             {
               "$ref": "#/definitions/Version"
+            }
+          ]
+        }
+      }
+    },
+    "SharedDependency": {
+      "description": "A resolved dependency of the package.",
+      "type": "object",
+      "required": [
+        "dependency",
+        "version"
+      ],
+      "properties": {
+        "dependency": {
+          "description": "The resolved dependency",
+          "allOf": [
+            {
+              "$ref": "#/definitions/Dependency"
+            }
+          ]
+        },
+        "version": {
+          "description": "The resolved version of the dependency",
+          "allOf": [
+            {
+              "$ref": "#/definitions/VersionReq"
             }
           ]
         }

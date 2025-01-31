@@ -69,6 +69,7 @@ impl Default for PackageConfig {
 // qpm.json::info
 #[derive(Serialize, Deserialize, JsonSchema, Clone, Debug, Hash, Eq, PartialEq)]
 #[serde(rename_all = "camelCase")]
+#[schemars(description = "Metadata information about the package.")]
 pub struct PackageMetadata {
     #[schemars(description = "The name of the package.")]
     pub name: String,
@@ -89,10 +90,16 @@ pub struct PackageMetadata {
 // qpm.json::dependencies[]
 #[derive(Serialize, Deserialize, JsonSchema, Clone, Debug, Hash, Eq, PartialEq)]
 #[serde(rename_all = "camelCase")]
+#[schemars(description = "A dependency of the package.")]
 pub struct PackageDependency {
+    #[schemars(description = "The unique identifier of the dependency")]
     pub id: String,
+
     #[serde(deserialize_with = "deserialize_version_req_wrapper")]
+    #[schemars(description = "The version range of the dependency")]
     pub version_range: VersionReqWrapper,
+
+    #[schemars(description = "Additional metadata for the dependency")]
     pub additional_data: PackageDependencyModifier,
 }
 
