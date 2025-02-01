@@ -31,7 +31,6 @@ pub struct SharedDependency {
     pub dependency: Dependency,
 
     #[schemars(description = "The resolved version of the dependency")]
-    #[schemars(schema_with = "make_version_req_schema")]
     pub version: Version,
 }
 
