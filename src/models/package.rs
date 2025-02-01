@@ -11,10 +11,16 @@ use super::{
 
 use crate::models::version_req::make_version_req_schema;
 
-/// latest version
 #[inline]
 fn default_ver() -> Version {
     Version::new(0, 4, 0)
+}
+
+/// latest version
+#[inline]
+pub fn package_target_version() -> Version {
+    // This will be safe since it is checked in build.rs
+    Version::parse(env!("CARGO_PKG_VERSION")).unwrap()
 }
 
 // qpm.json
