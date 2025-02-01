@@ -8,11 +8,20 @@ edition = "2021"
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-semver = { version = "1.0", features = ["serde"] }
+semver = { version = "1.0.9", features = ["serde"] }
 cursed-semver-parser = { git = "https://github.com/raftario/cursed-semver-parser.git", features = [
     "serde",
 ] }
+schemars = { version = "0.8", features = ["semver"]}
 
 
 [build-dependencies]
-semver = { version = "1.0", features = ["serde"] }
+semver = { version = "1.0.9", features = ["serde"] }
+
+[[bin]]
+name = "gen-schema"
+path = "src/gen-schema.rs"
+
+[features]
+default = []
+schemars = []
