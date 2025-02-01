@@ -1,5 +1,5 @@
 use schemars::JsonSchema;
-use semver::VersionReq;
+use semver::{Version, VersionReq};
 use serde::{Deserialize, Serialize};
 
 use super::{extra::AdditionalPackageMetadata, package::PackageConfig};
@@ -31,8 +31,7 @@ pub struct SharedDependency {
     pub dependency: Dependency,
 
     #[schemars(description = "The resolved version of the dependency")]
-    #[schemars(schema_with = "make_version_req_schema")]
-    pub version: VersionReq,
+    pub version: Version,
 }
 
 /// qpm.shared.json
