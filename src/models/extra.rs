@@ -76,7 +76,7 @@ pub struct AdditionalPackageMetadata {
 }
 
 /// - compileOptions (QPM.Commands.SupportedPropertiesCommand+CompileOptionsProperty): Additional options for compilation and edits to compilation related files. - Supported in: package
-/// Type: QPM.Commands.SupportedPropertiesCommand+CompileOptionsProperty
+///   Type: QPM.Commands.SupportedPropertiesCommand+CompileOptionsProperty
 /// - includePaths - OPTIONAL (System.String[]): Additional include paths to add, relative to the extern directory.
 /// - systemIncludes - OPTIONAL (System.String[]): Additional system include paths to add, relative to the extern directory.
 /// - cppFeatures - OPTIONAL (System.String[]): Additional C++ features to add.

@@ -1,17 +1,20 @@
 use std::path::PathBuf;
 
-use semver::{Version, VersionReq};
 use schemars::JsonSchema;
-use serde::{Deserialize, Serialize, Deserializer};
+use semver::{Version, VersionReq};
+use serde::{Deserialize, Deserializer, Serialize};
 
 use super::{
-    extra::{AdditionalPackageMetadata, PackageDependencyModifier}, workspace::WorkspaceConfig
+    extra::{AdditionalPackageMetadata, PackageDependencyModifier},
+    workspace::WorkspaceConfig,
 };
+
+use crate::models::version_req::make_version_req_schema;
 
 /// latest version
 #[inline]
 fn default_ver() -> Version {
-    Version::new(0,4,0)
+    Version::new(0, 4, 0)
 }
 
 // qpm.json
@@ -91,12 +94,12 @@ pub struct PackageDependency {
 
     #[serde(deserialize_with = "cursed_semver_parser::deserialize")]
     #[schemars(description = "The version range of the dependency")]
+    #[schemars(schema_with = "make_version_req_schema")]
     pub version_range: VersionReq,
 
     #[schemars(description = "Additional metadata for the dependency")]
     pub additional_data: PackageDependencyModifier,
 }
-
 
 fn deserialize_null_default<'de, D, T>(deserializer: D) -> Result<T, D::Error>
 where

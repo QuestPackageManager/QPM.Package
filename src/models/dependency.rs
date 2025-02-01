@@ -4,6 +4,9 @@ use serde::{Deserialize, Serialize};
 
 use super::{extra::AdditionalPackageMetadata, package::PackageConfig};
 
+use crate::models::version_req::make_version_req_schema;
+
+
 #[derive(Serialize, Deserialize, JsonSchema, Clone, Debug, Hash, Eq, PartialEq)]
 #[serde(rename_all = "camelCase")]
 #[schemars(description = "A dependency of the package.")]
@@ -11,6 +14,7 @@ pub struct Dependency {
     pub id: String,
     #[serde(deserialize_with = "cursed_semver_parser::deserialize")]
     #[schemars(description = "The version range of the dependency")]
+    #[schemars(schema_with = "make_version_req_schema")]
     pub version_range: VersionReq,
 
     // Should've been PackageDependencyModifier but oh well
@@ -27,6 +31,7 @@ pub struct SharedDependency {
     pub dependency: Dependency,
 
     #[schemars(description = "The resolved version of the dependency")]
+    #[schemars(schema_with = "make_version_req_schema")]
     pub version: VersionReq,
 }
 

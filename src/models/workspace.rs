@@ -4,6 +4,8 @@ use schemars::JsonSchema;
 use semver::VersionReq;
 use serde::{Deserialize, Serialize};
 
+use crate::models::version_req::make_version_req_schema;
+
 pub type WorkspaceScript = Vec<String>;
 
 /// qpm.json::workspace
@@ -19,6 +21,7 @@ pub struct WorkspaceConfig {
     /// NDK Version Range
     #[serde(skip_serializing_if = "Option::is_none")]
     #[schemars(description = "The NDK version range.")]
+    #[schemars(schema_with = "make_version_req_schema")]
     pub ndk: Option<VersionReq>,
 
     #[serde(default)]
