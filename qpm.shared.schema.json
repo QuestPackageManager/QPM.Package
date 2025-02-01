@@ -207,11 +207,13 @@
         },
         "versionRange": {
           "description": "The version range of the dependency",
-          "allOf": [
-            {
-              "$ref": "#/definitions/VersionReq"
+          "type": "string",
+          "properties": {
+            "format": {
+              "title": "String",
+              "type": "string"
             }
-          ]
+          }
         }
       }
     },
@@ -277,11 +279,8 @@
         "version": {
           "description": "The version of the package configuration.",
           "default": "0.4.0",
-          "allOf": [
-            {
-              "$ref": "#/definitions/Version"
-            }
-          ]
+          "type": "string",
+          "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$"
         },
         "workspace": {
           "description": "The workspace configuration.",
@@ -322,11 +321,13 @@
         },
         "versionRange": {
           "description": "The version range of the dependency",
-          "allOf": [
-            {
-              "$ref": "#/definitions/VersionReq"
+          "type": "string",
+          "properties": {
+            "format": {
+              "title": "String",
+              "type": "string"
             }
-          ]
+          }
         }
       }
     },
@@ -420,11 +421,8 @@
         },
         "version": {
           "description": "The version of the package.",
-          "allOf": [
-            {
-              "$ref": "#/definitions/Version"
-            }
-          ]
+          "type": "string",
+          "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$"
         }
       }
     },
@@ -446,34 +444,32 @@
         },
         "version": {
           "description": "The resolved version of the dependency",
-          "allOf": [
-            {
-              "$ref": "#/definitions/VersionReq"
+          "type": "string",
+          "properties": {
+            "format": {
+              "title": "String",
+              "type": "string"
             }
-          ]
+          }
         }
       }
-    },
-    "Version": {
-      "type": "string"
-    },
-    "VersionReq": {
-      "type": "string"
     },
     "WorkspaceConfig": {
       "description": "Configuration for the workspace.",
       "type": "object",
+      "required": [
+        "ndk"
+      ],
       "properties": {
         "ndk": {
           "description": "The NDK version range.",
-          "anyOf": [
-            {
-              "$ref": "#/definitions/VersionReq"
-            },
-            {
-              "type": "null"
+          "type": "string",
+          "properties": {
+            "format": {
+              "title": "String",
+              "type": "string"
             }
-          ]
+          }
         },
         "qmodIncludeDirs": {
           "description": "List of directories to search during qmod creation.",
