@@ -1,6 +1,10 @@
 pub mod package;
-pub mod dependency;
+pub mod shared_package;
 pub mod extra;
-pub mod backend;
+
+pub mod qpackages;
+
+pub mod qpkg;
+
 pub mod workspace;
 mod version_req;

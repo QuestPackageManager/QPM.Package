@@ -4,16 +4,14 @@ use schemars::JsonSchema;
 use semver::{Version, VersionReq};
 use serde::{Deserialize, Deserializer, Serialize};
 
-use super::{
-    extra::{AdditionalPackageMetadata, PackageDependencyModifier},
-    workspace::WorkspaceConfig,
-};
-
 use crate::models::version_req::make_version_req_schema;
+use crate::extensions::serde_utils::deserialize_null_default;
+
+use super::extra::CompileOptions;
 
 #[inline]
 fn default_ver() -> Version {
-    Version::new(0, 4, 0)
+    Version::new(2, 0, 0)
 }
 
 /// latest version
@@ -28,90 +26,124 @@ pub fn package_target_version() -> Version {
 #[allow(non_snake_case)]
 #[serde(rename_all = "camelCase")]
 #[schemars(description = "Configuration for a package.")]
-pub struct PackageConfig {
+pub struct Package {
+    /// Package ID
+    pub id: String,
+    /// Package version
+    pub version: String,
+    /// Directory where dependencies are restored
+    pub dependencies_directory: String,
+    /// Directories shared by the package
+    pub shared_directories: Vec<String>,
+    /// Workspace configuration
+    #[serde(default)]
+    pub workspace: PackageWorkspace,
+    /// Additional package metadata
+    #[serde(default)]
+    pub additional_data: PackageAdditionalData,
+    /// Package triplet configurations
+    pub triplet: PackageTripletConfig,
+    /// Config version, defaults to 2.0.0
     #[serde(default = "default_ver")]
-    #[schemars(description = "The version of the package configuration.")]
-    pub version: Version,
+    pub config_version: Version,
 
-    #[schemars(description = "The directory where shared files are stored.")]
-    pub shared_dir: PathBuf,
+    /// Whether to generate the cmake files on restore
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[schemars(description = "Whether to generate CMake files on restore.")]
+    pub cmake: Option<bool>,
 
-    #[schemars(description = "The directory where dependencies are stored.")]
-    pub dependencies_dir: PathBuf,
+    /// Whether to generate the a toolchain JSON file [CompileOptions] describing the project setup configuration
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[schemars(
+        description = "Path to generate a toolchain JSON file describing the project setup configuration."
+    )]
+    pub toolchain_out: Option<PathBuf>,
+}
 
-    #[schemars(description = "The package metadata.")]
-    pub info: PackageMetadata,
-    // allow workspace to be null
+#[derive(
+    Serialize, Deserialize, Clone, Debug, Default, JsonSchema, PartialEq, Eq, PartialOrd, Ord,
+)]
+pub struct PackageWorkspace {
+    /// Scripts to run at different stages
+    #[serde(default)]
+    pub scripts: PackageWorkspaceScripts,
+    /// Directories to search for qmod files
+    #[serde(default)]
+    pub qmod_search_dirs: Vec<String>,
+    /// Files to include in the qmod
+    #[serde(default)]
+    pub qmod_include_files: Vec<String>,
+    /// Output directory for the qmod
     #[serde(default, deserialize_with = "deserialize_null_default")]
-    #[schemars(description = "The workspace configuration.")]
-    pub workspace: WorkspaceConfig,
-
-    #[schemars(description = "The dependencies of the package.")]
-    pub dependencies: Vec<PackageDependency>,
+    pub qmod_output: Option<String>,
 }
 
-impl Default for PackageConfig {
-    fn default() -> Self {
-        Self {
-            version: default_ver(),
-            dependencies: Default::default(),
-            dependencies_dir: Default::default(),
-            info: PackageMetadata {
-                name: Default::default(),
-                id: Default::default(),
-                version: Version::new(1, 0, 0),
-                url: Default::default(),
-                additional_data: Default::default(),
-            },
-            shared_dir: Default::default(),
-            workspace: Default::default(),
-        }
-    }
+#[derive(
+    Serialize, Deserialize, Clone, Debug, Default, JsonSchema, PartialEq, Eq, PartialOrd, Ord,
+)]
+pub struct PackageWorkspaceScripts {
+    /// Scripts to run before building
+    #[serde(default)]
+    pub build: Vec<String>,
 }
 
-// qpm.json::info
-#[derive(Serialize, Deserialize, JsonSchema, Clone, Debug, Hash, Eq, PartialEq)]
-#[serde(rename_all = "camelCase")]
-#[schemars(description = "Metadata information about the package.")]
-pub struct PackageMetadata {
-    #[schemars(description = "The name of the package.")]
-    pub name: String,
-
-    #[schemars(description = "The unique identifier of the package.")]
-    pub id: String,
-
-    #[schemars(description = "The version of the package.")]
-    pub version: Version,
-
-    #[schemars(description = "The website for the package.")]
-    pub url: Option<String>,
-
-    #[schemars(description = "Additional metadata for the package.")]
-    pub additional_data: AdditionalPackageMetadata,
+#[derive(
+    Serialize, Deserialize, Clone, Debug, Default, JsonSchema, PartialEq, Eq, PartialOrd, Ord,
+)]
+pub struct PackageAdditionalData {
+    /// Package description
+    #[serde(default)]
+    pub description: String,
+    /// Package author
+    #[serde(default)]
+    pub author: String,
+    /// Package license
+    #[serde(default)]
+    pub license: String,
 }
 
-// qpm.json::dependencies[]
-#[derive(Serialize, Deserialize, JsonSchema, Clone, Debug, Hash, Eq, PartialEq)]
-#[serde(rename_all = "camelCase")]
-#[schemars(description = "A dependency of the package.")]
-pub struct PackageDependency {
-    #[schemars(description = "The unique identifier of the dependency")]
-    pub id: String,
+pub type TripletDependencyMap = std::collections::HashMap<String, PackageTripletDependency>;
 
-    #[serde(deserialize_with = "cursed_semver_parser::deserialize")]
-    #[schemars(description = "The version range of the dependency")]
+pub type TripletEnvironmentMap = std::collections::HashMap<String, String>;
+
+#[derive(Serialize, Deserialize, Clone, Debug, JsonSchema, Default, PartialEq, Eq)]
+pub struct PackageTripletConfig {
+    /// Default configuration for all triplets. All triplets will inherit from this.
+    pub default: PackageTripletSettings,
+    /// Configuration for specific triplets
+    #[serde(flatten)]
+    pub specific_triplets: std::collections::HashMap<String, PackageTripletSettings>,
+}
+
+/// Triplet settings for a package
+#[derive(Serialize, Deserialize, Clone, Debug, Default, JsonSchema, PartialEq, Eq)]
+pub struct PackageTripletSettings {
+    /// Dependencies for this triplet
+    #[serde(default)]
+    pub dependencies: TripletDependencyMap,
+
+    /// Environment variables for this triplet.
+    #[serde(default)]
+    pub env: TripletEnvironmentMap,
+
+    /// Additional Compile options to be used with this package
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[schemars(description = "Additional compile options for the package.")]
+    pub compile_options: Option<CompileOptions>,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, JsonSchema, Default, PartialEq, Eq)]
+pub struct PackageTripletDependency {
+    /// Version range requirement
+    #[serde(rename = "versionRange")]
     #[schemars(schema_with = "make_version_req_schema")]
     pub version_range: VersionReq,
-
-    #[schemars(description = "Additional metadata for the dependency")]
-    pub additional_data: PackageDependencyModifier,
-}
-
-fn deserialize_null_default<'de, D, T>(deserializer: D) -> Result<T, D::Error>
-where
-    T: Default + Deserialize<'de>,
-    D: Deserializer<'de>,
-{
-    let opt = Option::deserialize(deserializer)?;
-    Ok(opt.unwrap_or_default())
+    /// Target triplet
+    pub triplet: String,
+    /// Whether to export this dependency to consumers
+    #[serde(default)]
+    pub export: bool,
+    /// Whether to include this dependency in the qmod
+    #[serde(default)]
+    pub qmod_export: bool,
 }
