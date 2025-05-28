@@ -8,13 +8,13 @@ use std::collections::HashMap;
 #[schemars(description = "QPKG package. Distributes a package with all triplet binaries and their headers.")]
 pub struct QPkg {
     /// Triplet map
-    pub triplets: HashMap<String, TripletInfo>,
+    pub triplets: HashMap<String, QPkgTripletInfo>,
 
     pub header_file: String,
 }
 
 #[derive(Serialize, Deserialize, JsonSchema, Clone, Debug, PartialEq, Eq)]
-pub struct TripletInfo {
+pub struct QPkgTripletInfo {
     /// Paths to the binary files
     pub files: Vec<String>,
 }

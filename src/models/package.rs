@@ -130,6 +130,11 @@ pub struct PackageTripletSettings {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[schemars(description = "Additional compile options for the package.")]
     pub compile_options: Option<CompileOptions>,
+
+    /// QMod URL for this triplet
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[schemars(description = "QMod URL for this triplet.")]
+    pub qmod_url: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, JsonSchema, Default, PartialEq, Eq)]
