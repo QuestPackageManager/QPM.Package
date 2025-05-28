@@ -60,6 +60,23 @@ pub struct Package {
     pub toolchain_out: Option<PathBuf>,
 }
 
+impl Default for Package {
+    fn default() -> Self {
+        Self {
+            id: String::new(),
+            version: default_ver(),
+            dependencies_directory: "dependencies".to_string(),
+            shared_directories: Vec::new(),
+            workspace: PackageWorkspace::default(),
+            additional_data: PackageAdditionalData::default(),
+            triplet: PackageTripletConfig::default(),
+            config_version: default_ver(),
+            cmake: None,
+            toolchain_out: None,
+        }
+    }
+}
+
 #[derive(
     Serialize, Deserialize, Clone, Debug, Default, JsonSchema, PartialEq, Eq, PartialOrd, Ord,
 )]
