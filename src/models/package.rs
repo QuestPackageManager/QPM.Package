@@ -30,7 +30,7 @@ pub struct Package {
     /// Package ID
     pub id: String,
     /// Package version
-    pub version: String,
+    pub version: Version,
     /// Directory where dependencies are restored
     pub dependencies_directory: String,
     /// Directories shared by the package
