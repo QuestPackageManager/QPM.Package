@@ -65,7 +65,7 @@ impl Default for Package {
         Self {
             id: String::new(),
             version: default_ver(),
-            dependencies_directory: "dependencies".to_string(),
+            dependencies_directory: "extern".to_string(),
             shared_directories: Vec::new(),
             workspace: PackageWorkspace::default(),
             additional_data: PackageAdditionalData::default(),
