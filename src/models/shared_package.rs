@@ -2,7 +2,7 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-use super::package::Package;
+use super::package::PackageConfig;
 
 pub type SharedLockedTripletMap = HashMap<String, SharedTriplet>;
 
@@ -11,10 +11,10 @@ pub type SharedLockedTripletMap = HashMap<String, SharedTriplet>;
 #[allow(non_snake_case)]
 #[serde(rename_all = "camelCase")]
 #[schemars(description = "Configuration for a shared package.")]
-pub struct SharedPackage {
+pub struct SharedPackageConfig {
     /// Package name
     #[schemars(description = "Package name")]
-    pub config: Package,
+    pub config: PackageConfig,
     /// Triplet map
     #[schemars(description = "Triplet map")]
     pub locked_triplet: SharedLockedTripletMap,

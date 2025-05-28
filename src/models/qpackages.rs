@@ -1,8 +1,8 @@
 use schemars::JsonSchema;
 use semver::Version;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
-use super::{package::Package, shared_package::SharedPackage};
+use super::{package::PackageConfig, shared_package::SharedPackageConfig};
 
 #[derive(Serialize, Deserialize, JsonSchema, Clone, Debug, PartialEq, Eq)]
 #[allow(non_snake_case)]
@@ -12,8 +12,7 @@ pub struct QPackagesPackage {
     /// Package Configuration
     #[schemars(description = "Package Configuration")]
     #[serde(rename = "config")]
-    pub config: Package,
-
+    pub config: PackageConfig,
 
     /// Checksum of the qpkg
     #[schemars(description = "Checksum of the qpkg")]

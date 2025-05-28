@@ -4,8 +4,8 @@ use schemars::JsonSchema;
 use semver::{Version, VersionReq};
 use serde::{Deserialize, Deserializer, Serialize};
 
-use crate::models::version_req::make_version_req_schema;
 use crate::extensions::serde_utils::deserialize_null_default;
+use crate::models::version_req::make_version_req_schema;
 
 use super::extra::CompileOptions;
 
@@ -26,7 +26,7 @@ pub fn package_target_version() -> Version {
 #[allow(non_snake_case)]
 #[serde(rename_all = "camelCase")]
 #[schemars(description = "Configuration for a package.")]
-pub struct Package {
+pub struct PackageConfig {
     /// Package ID
     pub id: String,
     /// Package version
@@ -60,7 +60,7 @@ pub struct Package {
     pub toolchain_out: Option<PathBuf>,
 }
 
-impl Default for Package {
+impl Default for PackageConfig {
     fn default() -> Self {
         Self {
             id: String::new(),

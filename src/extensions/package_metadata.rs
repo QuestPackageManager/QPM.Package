@@ -1,8 +1,7 @@
 use std::path::PathBuf;
 
-use crate::models::{package::Package, shared_package::SharedPackage};
+use crate::models::{package::PackageConfig, shared_package::SharedPackageConfig};
 
 pub trait PackageMetadataExtensions {}
 
-impl PackageMetadataExtensions for Package {}
-
+impl PackageMetadataExtensions for PackageConfig {}
