@@ -140,6 +140,47 @@ pub struct PackageTripletsConfig {
     pub specific_triplets: HashMap<TripletId, PackageTripletSettings>,
 }
 
+impl PackageTripletsConfig {
+    /// Retrieves the settings for a specific triplet, merging with default settings.
+    ///
+    /// This function looks up settings for the specified triplet and combines them with
+    /// the default settings to create a complete configuration. The merging strategy is:
+    ///
+    /// - Dependencies: Both specific and default dependencies are included
+    /// - Environment variables: Both specific and default variables are included, with specific ones taking precedence
+    /// - Compile options: Merged with default options if present
+    /// - QMod URL: Uses the specific URL if available, otherwise falls back to the default
+    ///
+    /// # Parameters
+    /// * `triplet` - The triplet identifier to look up settings for
+    ///
+    /// # Returns
+    /// * `Some(PackageTripletSettings)` if the triplet exists in the configuration
+    /// * `None` if the triplet is not found in the specific_triplets map
+    pub fn get_triplet_settings(&self, triplet: &TripletId) -> Option<PackageTripletSettings> {
+        let found = self.specific_triplets.get(triplet)?;
+
+        let default = &self.default;
+        let mut dependencies = found.dependencies.clone();
+        dependencies.extend(default.dependencies.clone());
+
+        let mut env = found.env.clone();
+        env.extend(default.env.clone());
+
+        let compile_options = found
+            .compile_options
+            .clone()
+            .map(|a| a.merge(self.default.compile_options.clone().unwrap_or_default()));
+
+        Some(PackageTripletSettings {
+            dependencies,
+            env,
+            compile_options,
+            qmod_url: found.qmod_url.clone().or(default.qmod_url.clone()),
+        })
+    }
+}
+
 /// Triplet settings for a package
 #[derive(Serialize, Deserialize, Clone, Debug, Default, JsonSchema, PartialEq, Eq)]
 pub struct PackageTripletSettings {
@@ -160,6 +201,18 @@ pub struct PackageTripletSettings {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[schemars(description = "QMod URL for this triplet.")]
     pub qmod_url: Option<String>,
+}
+
+impl CompileOptions {
+    pub fn merge(self, other: CompileOptions) -> Self {
+        Self {
+            c_flags: self.c_flags.or(other.c_flags),
+            cpp_features: self.cpp_features.or(other.cpp_features),
+            cpp_flags: self.cpp_flags.or(other.cpp_flags),
+            include_paths: self.include_paths.or(other.include_paths),
+            system_includes: self.system_includes.or(other.system_includes),
+        }
+    }
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, JsonSchema, Default, PartialEq, Eq)]
