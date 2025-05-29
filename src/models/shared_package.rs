@@ -43,7 +43,7 @@ pub struct SharedTriplet {
 pub struct SharedTripletDependencyInfo {
     /// Version of the dependency
     #[schemars(description = "Version of the dependency.")]
-    pub restored_version: Option<Version>,
+    pub restored_version: Version,
     /// Version range requirement
     #[serde(rename = "versionRange")]
     #[schemars(schema_with = "make_version_req_schema")]
