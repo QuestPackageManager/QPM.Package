@@ -29,13 +29,13 @@ pub fn package_target_version() -> Version {
 #[schemars(description = "Configuration for a package.")]
 pub struct PackageConfig {
     /// Package ID
-    pub id: String,
+    pub id: DependencyId,
     /// Package version
     pub version: Version,
     /// Directory where dependencies are restored
-    pub dependencies_directory: String,
+    pub dependencies_directory: PathBuf,
     /// Directories shared by the package
-    pub shared_directories: Vec<String>,
+    pub shared_directories: Vec<PathBuf>,
     /// Workspace configuration
     #[serde(default)]
     pub workspace: PackageWorkspace,
@@ -64,9 +64,9 @@ pub struct PackageConfig {
 impl Default for PackageConfig {
     fn default() -> Self {
         Self {
-            id: String::new(),
+            id: DependencyId::default(),
             version: default_ver(),
-            dependencies_directory: "extern".to_string(),
+            dependencies_directory: "extern".into(),
             shared_directories: Vec::new(),
             workspace: PackageWorkspace::default(),
             additional_data: PackageAdditionalData::default(),
@@ -87,13 +87,13 @@ pub struct PackageWorkspace {
     pub scripts: PackageWorkspaceScripts,
     /// Directories to search for qmod files
     #[serde(default)]
-    pub qmod_search_dirs: Vec<String>,
+    pub qmod_search_dirs: Vec<PathBuf>,
     /// Files to include in the qmod
     #[serde(default)]
-    pub qmod_include_files: Vec<String>,
+    pub qmod_include_files: Vec<PathBuf>,
     /// Output directory for the qmod
     #[serde(default, deserialize_with = "deserialize_null_default")]
-    pub qmod_output: Option<String>,
+    pub qmod_output: Option<PathBuf>,
 }
 
 #[derive(
