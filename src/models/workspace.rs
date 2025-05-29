@@ -34,5 +34,6 @@ pub struct WorkspaceConfig {
 
     #[serde(default)]
     #[schemars(description = "Output path for the qmod.")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub qmod_output: Option<PathBuf>,
 }

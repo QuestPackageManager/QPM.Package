@@ -9,6 +9,7 @@ use crate::extensions::serde_utils::deserialize_null_default;
 use crate::models::version_req::make_version_req_schema;
 
 use super::extra::CompileOptions;
+use super::workspace::WorkspaceConfig;
 
 #[inline]
 fn default_ver() -> Version {
@@ -38,7 +39,7 @@ pub struct PackageConfig {
     pub shared_directories: Vec<PathBuf>,
     /// Workspace configuration
     #[serde(default)]
-    pub workspace: PackageWorkspace,
+    pub workspace: WorkspaceConfig,
     /// Additional package metadata
     #[serde(default)]
     pub additional_data: PackageAdditionalData,
@@ -68,7 +69,7 @@ impl Default for PackageConfig {
             version: default_ver(),
             dependencies_directory: "extern".into(),
             shared_directories: Vec::new(),
-            workspace: PackageWorkspace::default(),
+            workspace: Default::default(),
             additional_data: PackageAdditionalData::default(),
             triplet: PackageTripletsConfig::default(),
             config_version: default_ver(),
@@ -76,24 +77,6 @@ impl Default for PackageConfig {
             toolchain_out: None,
         }
     }
-}
-
-#[derive(
-    Serialize, Deserialize, Clone, Debug, Default, JsonSchema, PartialEq, Eq, PartialOrd, Ord,
-)]
-pub struct PackageWorkspace {
-    /// Scripts to run at different stages
-    #[serde(default)]
-    pub scripts: PackageWorkspaceScripts,
-    /// Directories to search for qmod files
-    #[serde(default)]
-    pub qmod_search_dirs: Vec<PathBuf>,
-    /// Files to include in the qmod
-    #[serde(default)]
-    pub qmod_include_files: Vec<PathBuf>,
-    /// Output directory for the qmod
-    #[serde(default, deserialize_with = "deserialize_null_default")]
-    pub qmod_output: Option<PathBuf>,
 }
 
 #[derive(
