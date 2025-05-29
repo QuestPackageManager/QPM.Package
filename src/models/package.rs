@@ -1,8 +1,9 @@
+use std::collections::HashMap;
 use std::path::PathBuf;
 
 use schemars::JsonSchema;
 use semver::{Version, VersionReq};
-use serde::{Deserialize, Deserializer, Serialize};
+use serde::{Deserialize, Serialize};
 
 use crate::extensions::serde_utils::deserialize_null_default;
 use crate::models::version_req::make_version_req_schema;
@@ -42,7 +43,7 @@ pub struct PackageConfig {
     #[serde(default)]
     pub additional_data: PackageAdditionalData,
     /// Package triplet configurations
-    pub triplet: PackageTripletConfig,
+    pub triplet: PackageTripletsConfig,
     /// Config version, defaults to 2.0.0
     #[serde(default = "default_ver")]
     pub config_version: Version,
@@ -69,7 +70,7 @@ impl Default for PackageConfig {
             shared_directories: Vec::new(),
             workspace: PackageWorkspace::default(),
             additional_data: PackageAdditionalData::default(),
-            triplet: PackageTripletConfig::default(),
+            triplet: PackageTripletsConfig::default(),
             config_version: default_ver(),
             cmake: None,
             toolchain_out: None,
@@ -119,17 +120,24 @@ pub struct PackageAdditionalData {
     pub license: String,
 }
 
-pub type TripletDependencyMap = std::collections::HashMap<String, PackageTripletDependency>;
+#[derive(Serialize, Deserialize, Clone, Debug, JsonSchema, Default, PartialEq, Eq, Hash)]
+pub struct TripletId(String);
 
-pub type TripletEnvironmentMap = std::collections::HashMap<String, String>;
+#[derive(Serialize, Deserialize, Clone, Debug, JsonSchema, Default, PartialEq, Eq, Hash)]
+pub struct DependencyId(String);
+
+// Dependency ID -> Dependency
+pub type TripletDependencyMap = HashMap<DependencyId, PackageTripletDependency>;
+// ENV -> VALUE
+pub type TripletEnvironmentMap = HashMap<String, String>;
 
 #[derive(Serialize, Deserialize, Clone, Debug, JsonSchema, Default, PartialEq, Eq)]
-pub struct PackageTripletConfig {
+pub struct PackageTripletsConfig {
     /// Default configuration for all triplets. All triplets will inherit from this.
     pub default: PackageTripletSettings,
     /// Configuration for specific triplets
     #[serde(flatten)]
-    pub specific_triplets: std::collections::HashMap<String, PackageTripletSettings>,
+    pub specific_triplets: HashMap<TripletId, PackageTripletSettings>,
 }
 
 /// Triplet settings for a package
@@ -161,7 +169,7 @@ pub struct PackageTripletDependency {
     #[schemars(schema_with = "make_version_req_schema")]
     pub version_range: VersionReq,
     /// Target triplet
-    pub triplet: String,
+    pub triplet: TripletId,
     /// Whether to export this dependency to consumers
     #[serde(default)]
     pub export: bool,

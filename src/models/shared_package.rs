@@ -1,10 +1,13 @@
 use schemars::JsonSchema;
+use semver::{Version, VersionReq};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-use super::package::PackageConfig;
+use super::package::{DependencyId, PackageConfig, TripletId};
 
-pub type SharedLockedTripletMap = HashMap<String, SharedTriplet>;
+pub type SharedLockedTripletMap = HashMap<TripletId, SharedTriplet>;
+use crate::models::version_req::make_version_req_schema;
+
 
 // qpm.shared.json
 #[derive(Serialize, Deserialize, JsonSchema, Clone, Debug, PartialEq, Eq)]
@@ -27,7 +30,7 @@ pub struct SharedPackageConfig {
 pub struct SharedTriplet {
     /// Triplet map
     #[schemars(description = "Triplet map")]
-    pub restored_dependencies: HashMap<String, SharedTripletDependencyInfo>,
+    pub restored_dependencies: HashMap<DependencyId, SharedTripletDependencyInfo>,
     // default should not appear here. All triplets should be listed
     // TODO: Include checksums here?
     // TODO: Include qpkg urls here?
@@ -40,11 +43,12 @@ pub struct SharedTriplet {
 pub struct SharedTripletDependencyInfo {
     /// Version of the dependency
     #[schemars(description = "Version of the dependency.")]
-    pub restored_version: Option<String>,
+    pub restored_version: Option<Version>,
     /// Version range requirement
-    #[schemars(description = "Version range requirement.")]
-    pub version_range: String,
+    #[serde(rename = "versionRange")]
+    #[schemars(schema_with = "make_version_req_schema")]
+    pub version_range: VersionReq,
     /// Triplet of the dependency
     #[schemars(description = "Triplet of the dependency.")]
-    pub triplet: String,
+    pub triplet: TripletId,
 }

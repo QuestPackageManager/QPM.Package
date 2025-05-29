@@ -1,8 +1,7 @@
 use schemars::JsonSchema;
-use semver::Version;
 use serde::{Deserialize, Serialize};
 
-use super::{package::PackageConfig, shared_package::SharedPackageConfig};
+use super::package::PackageConfig;
 
 #[derive(Serialize, Deserialize, JsonSchema, Clone, Debug, PartialEq, Eq)]
 #[allow(non_snake_case)]
