@@ -121,10 +121,10 @@ pub struct PackageAdditionalData {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, JsonSchema, Default, PartialEq, Eq, Hash)]
-pub struct TripletId(String);
+pub struct TripletId(pub String);
 
 #[derive(Serialize, Deserialize, Clone, Debug, JsonSchema, Default, PartialEq, Eq, Hash)]
-pub struct DependencyId(String);
+pub struct DependencyId(pub String);
 
 // Dependency ID -> Dependency
 pub type TripletDependencyMap = HashMap<DependencyId, PackageTripletDependency>;
