@@ -1,11 +1,11 @@
 use std::collections::HashMap;
+use std::fmt::Display;
 use std::path::PathBuf;
 
 use schemars::JsonSchema;
 use semver::{Version, VersionReq};
 use serde::{Deserialize, Serialize};
 
-use crate::extensions::serde_utils::deserialize_null_default;
 use crate::models::version_req::make_version_req_schema;
 
 use super::extra::CompileOptions;
@@ -60,23 +60,6 @@ pub struct PackageConfig {
         description = "Path to generate a toolchain JSON file describing the project setup configuration."
     )]
     pub toolchain_out: Option<PathBuf>,
-}
-
-impl Default for PackageConfig {
-    fn default() -> Self {
-        Self {
-            id: DependencyId::default(),
-            version: default_ver(),
-            dependencies_directory: "extern".into(),
-            shared_directories: Vec::new(),
-            workspace: Default::default(),
-            additional_data: PackageAdditionalData::default(),
-            triplet: PackageTripletsConfig::default(),
-            config_version: default_ver(),
-            cmake: None,
-            toolchain_out: None,
-        }
-    }
 }
 
 #[derive(
@@ -212,4 +195,33 @@ pub struct PackageTripletDependency {
     /// Whether to include this dependency in the qmod
     #[serde(default)]
     pub qmod_export: bool,
+}
+
+impl Default for PackageConfig {
+    fn default() -> Self {
+        Self {
+            id: DependencyId::default(),
+            version: default_ver(),
+            dependencies_directory: "extern".into(),
+            shared_directories: Vec::new(),
+            workspace: Default::default(),
+            additional_data: PackageAdditionalData::default(),
+            triplet: PackageTripletsConfig::default(),
+            config_version: default_ver(),
+            cmake: None,
+            toolchain_out: None,
+        }
+    }
+}
+
+impl Display for DependencyId {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+
+impl Display for TripletId {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.0)
+    }
 }
