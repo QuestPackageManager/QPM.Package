@@ -6,7 +6,6 @@ use std::collections::HashMap;
 use super::package::{DependencyId, PackageConfig, TripletId};
 
 pub type SharedLockedTripletMap = HashMap<TripletId, SharedTriplet>;
-use crate::models::version_req::make_version_req_schema;
 
 
 // qpm.shared.json
@@ -18,6 +17,9 @@ pub struct SharedPackageConfig {
     /// Package name
     #[schemars(description = "Package name")]
     pub config: PackageConfig,
+
+    pub restored_tripelt: TripletId,
+
     /// Triplet map
     #[schemars(description = "Triplet map")]
     pub locked_triplet: SharedLockedTripletMap,
