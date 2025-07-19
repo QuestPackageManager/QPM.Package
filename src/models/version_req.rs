@@ -1,4 +1,4 @@
-use schemars::{gen::SchemaGenerator, schema::Schema, schema_for, JsonSchema};
+use schemars::{r#gen::SchemaGenerator, schema::Schema, schema_for, JsonSchema};
 
 pub fn make_version_req_schema(generator: &mut SchemaGenerator) -> Schema {
     let schema = String::json_schema(generator);
