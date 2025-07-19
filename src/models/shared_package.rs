@@ -18,7 +18,7 @@ pub struct SharedPackageConfig {
     #[schemars(description = "Package name")]
     pub config: PackageConfig,
 
-    pub restored_tripelt: TripletId,
+    pub restored_triplet: TripletId,
 
     /// Triplet map
     #[schemars(description = "Triplet map")]
