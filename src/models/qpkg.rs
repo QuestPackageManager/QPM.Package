@@ -1,6 +1,6 @@
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::{collections::HashMap, path::PathBuf};
 
 #[derive(Serialize, Deserialize, JsonSchema, Clone, Debug, PartialEq, Eq)]
 #[allow(non_snake_case)]
@@ -11,12 +11,13 @@ use std::collections::HashMap;
 pub struct QPkg {
     /// Triplet map
     pub triplets: HashMap<String, QPkgTripletInfo>,
-
-    pub header_file: String,
 }
 
 #[derive(Serialize, Deserialize, JsonSchema, Clone, Debug, PartialEq, Eq)]
 pub struct QPkgTripletInfo {
+    pub headers: Vec<PathBuf>,
+    
     /// Paths to the binary files
-    pub files: Vec<String>,
+    /// relative to the qpkg root
+    pub files: Vec<PathBuf>,
 }
