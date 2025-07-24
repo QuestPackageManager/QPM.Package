@@ -1,12 +1,13 @@
 use schemars::JsonSchema;
-use semver::{Version, VersionReq};
+use semver::Version;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-use super::package::{DependencyId, PackageConfig, TripletId};
+use crate::models::triplet::{PackageTripletDependency, TripletId};
+
+use super::package::{DependencyId, PackageConfig};
 
 pub type SharedLockedTripletMap = HashMap<TripletId, SharedTriplet>;
-
 
 // qpm.shared.json
 #[derive(Serialize, Deserialize, JsonSchema, Clone, Debug, PartialEq, Eq)]
@@ -46,7 +47,6 @@ pub struct SharedTripletDependencyInfo {
     /// Version of the dependency
     #[schemars(description = "Version of the dependency.")]
     pub restored_version: Version,
-    /// Triplet of the dependency
-    #[schemars(description = "Triplet of the dependency.")]
-    pub triplet: TripletId,
+    /// Original triplet data
+    pub triplet: PackageTripletDependency,
 }

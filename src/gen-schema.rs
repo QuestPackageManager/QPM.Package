@@ -1,10 +1,7 @@
 use models::{package::PackageConfig, shared_package::SharedPackageConfig};
 
-pub mod models;
 pub mod extensions;
-
-
-
+pub mod models;
 
 fn main() {
     let shared_schema_json = schemars::schema_for!(SharedPackageConfig);

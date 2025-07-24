@@ -5,7 +5,9 @@ use std::collections::HashMap;
 #[derive(Serialize, Deserialize, JsonSchema, Clone, Debug, PartialEq, Eq)]
 #[allow(non_snake_case)]
 #[serde(rename_all = "camelCase")]
-#[schemars(description = "QPKG package. Distributes a package with all triplet binaries and their headers.")]
+#[schemars(
+    description = "QPKG package. Distributes a package with all triplet binaries and their headers."
+)]
 pub struct QPkg {
     /// Triplet map
     pub triplets: HashMap<String, QPkgTripletInfo>,
