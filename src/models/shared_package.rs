@@ -1,9 +1,10 @@
+use super::version_req::make_version_req_schema;
 use schemars::JsonSchema;
-use semver::Version;
+use semver::{Version, VersionReq};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-use crate::models::triplet::{PackageTripletDependency, TripletId};
+use crate::models::triplet::TripletId;
 
 use super::package::{DependencyId, PackageConfig};
 
@@ -49,6 +50,10 @@ pub struct SharedTripletDependencyInfo {
     /// Version of the dependency
     #[schemars(description = "Version of the dependency.")]
     pub restored_version: Version,
+
+    #[schemars(schema_with = "make_version_req_schema")]
+    pub version_range: VersionReq,
+
     /// Original triplet data
     pub restored_triplet: TripletId,
 }

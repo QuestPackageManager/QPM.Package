@@ -19,6 +19,9 @@ pub type TripletEnvironmentMap = HashMap<String, String>;
 
 /// Package triplet configuration
 #[derive(Serialize, Deserialize, Clone, Debug, JsonSchema, Default, PartialEq, Eq)]
+#[allow(non_snake_case)]
+#[serde(rename_all = "camelCase")]
+#[schemars(description = "Configuration for a package's triplets map")]
 pub struct PackageTripletsConfig {
     /// Default configuration for all triplets. All triplets will inherit from this.
     #[serde(default)]
@@ -76,6 +79,9 @@ impl PackageTripletsConfig {
 
 /// Triplet
 #[derive(Serialize, Deserialize, Clone, Debug, Default, JsonSchema, PartialEq, Eq)]
+#[allow(non_snake_case)]
+#[serde(rename_all = "camelCase")]
+#[schemars(description = "Configuration for a package triplet.")]
 pub struct PackageTriplet {
     /// Dependencies for this triplet
     #[serde(default)]
@@ -102,6 +108,9 @@ pub struct PackageTriplet {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, JsonSchema, Default, PartialEq, Eq)]
+#[allow(non_snake_case)]
+#[serde(rename_all = "camelCase")]
+#[schemars(description = "Dependency information for a package triplet.")]
 pub struct PackageTripletDependency {
     /// Version range requirement
     #[serde(rename = "versionRange")]
