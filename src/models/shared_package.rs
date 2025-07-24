@@ -9,6 +9,8 @@ use super::package::{DependencyId, PackageConfig};
 
 pub type SharedLockedTripletMap = HashMap<TripletId, SharedTriplet>;
 
+pub const QPM_SHARED_JSON: &str = "qpm2.shared.json";
+
 // qpm.shared.json
 #[derive(Serialize, Deserialize, JsonSchema, Clone, Debug, PartialEq, Eq)]
 #[allow(non_snake_case)]

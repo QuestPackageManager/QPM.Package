@@ -21,6 +21,8 @@ pub fn package_target_version() -> Version {
     Version::parse(env!("CARGO_PKG_VERSION")).unwrap()
 }
 
+pub const QPM_JSON: &str = "qpm2.json";
+
 #[derive(Serialize, Deserialize, Clone, Debug, JsonSchema, Default, PartialEq, Eq, Hash)]
 pub struct DependencyId(pub String);
 
