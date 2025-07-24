@@ -52,6 +52,10 @@ impl PackageTripletsConfig {
         let mut dependencies = found.dependencies.clone();
         dependencies.extend(default.dependencies.clone());
 
+
+        let mut dev_dependencies = found.dependencies.clone();
+        dev_dependencies.extend(default.dev_dependencies.clone());
+
         let mut env = found.env.clone();
         env.extend(default.env.clone());
 
@@ -62,6 +66,7 @@ impl PackageTripletsConfig {
 
         Some(PackageTriplet {
             dependencies,
+            dev_dependencies,
             env,
             compile_options,
             qmod_url: found.qmod_url.clone().or(default.qmod_url.clone()),
@@ -75,6 +80,10 @@ pub struct PackageTriplet {
     /// Dependencies for this triplet
     #[serde(default)]
     pub dependencies: TripletDependencyMap,
+
+    /// Dependencies for this triplet
+    #[serde(default)]
+    pub dev_dependencies: TripletDependencyMap,
 
     // TODO: use PackageTripletSettings
     /// Environment variables for this triplet.
