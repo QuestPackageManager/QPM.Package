@@ -11,15 +11,15 @@ pub const QPKG_JSON: &str = "qpm2.qpkg.json";
     description = "QPKG package. Distributes a package with all triplet binaries and their headers."
 )]
 pub struct QPkg {
+    /// The directory where the headers are located
+    pub shared_dir: PathBuf,
+
     /// Triplet map
     pub triplets: HashMap<String, QPkgTripletInfo>,
 }
 
 #[derive(Serialize, Deserialize, JsonSchema, Clone, Debug, PartialEq, Eq)]
 pub struct QPkgTripletInfo {
-    /// The directory where the headers are located
-    pub shared_dir: PathBuf,
-    
     /// Paths to the binary files
     /// relative to the qpkg root
     pub files: Vec<PathBuf>,
