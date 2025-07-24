@@ -2,6 +2,8 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, path::PathBuf};
 
+use crate::models::triplet::TripletId;
+
 pub const QPKG_JSON: &str = "qpm2.qpkg.json";
 
 #[derive(Serialize, Deserialize, JsonSchema, Clone, Debug, PartialEq, Eq)]
@@ -15,7 +17,7 @@ pub struct QPkg {
     pub shared_dir: PathBuf,
 
     /// Triplet map
-    pub triplets: HashMap<String, QPkgTripletInfo>,
+    pub triplets: HashMap<TripletId, QPkgTripletInfo>,
 }
 
 #[derive(Serialize, Deserialize, JsonSchema, Clone, Debug, PartialEq, Eq)]
