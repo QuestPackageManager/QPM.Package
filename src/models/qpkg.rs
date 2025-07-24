@@ -15,7 +15,8 @@ pub struct QPkg {
 
 #[derive(Serialize, Deserialize, JsonSchema, Clone, Debug, PartialEq, Eq)]
 pub struct QPkgTripletInfo {
-    pub headers: Vec<PathBuf>,
+    /// The directory where the headers are located
+    pub shared_dir: PathBuf,
     
     /// Paths to the binary files
     /// relative to the qpkg root
