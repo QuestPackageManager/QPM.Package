@@ -50,5 +50,5 @@ pub struct SharedTripletDependencyInfo {
     #[schemars(description = "Version of the dependency.")]
     pub restored_version: Version,
     /// Original triplet data
-    pub triplet: PackageTripletDependency,
+    pub restored_triplet: TripletId,
 }
