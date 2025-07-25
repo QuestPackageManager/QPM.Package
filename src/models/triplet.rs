@@ -118,9 +118,6 @@ pub struct PackageTripletDependency {
     pub version_range: VersionReq,
     /// Target triplet
     pub triplet: TripletId,
-    /// Whether to export this dependency to consumers
-    #[serde(default)]
-    pub export: bool,
     /// Whether to include this dependency in the qmod
     #[serde(default)]
     pub qmod_export: bool,
