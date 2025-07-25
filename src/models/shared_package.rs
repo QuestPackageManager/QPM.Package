@@ -51,8 +51,8 @@ pub struct SharedTripletDependencyInfo {
     #[schemars(description = "Version of the dependency.")]
     pub restored_version: Version,
 
-    #[schemars(schema_with = "make_version_req_schema")]
-    pub version_range: VersionReq,
+    // #[schemars(schema_with = "make_version_req_schema")]
+    // pub version_range: VersionReq,
 
     /// Original triplet data
     pub restored_triplet: TripletId,
