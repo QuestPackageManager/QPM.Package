@@ -107,6 +107,17 @@ pub struct PackageTriplet {
     pub qmod_url: Option<String>,
 }
 
+impl PackageTriplet {
+
+    pub fn get_dependency(&self, dep_id: &DependencyId) -> Option<&PackageTripletDependency> {
+        self.dependencies.get(dep_id).or_else(|| {
+            self.dev_dependencies.get(dep_id)
+        })
+    }
+
+    
+}
+
 #[derive(Serialize, Deserialize, Clone, Debug, JsonSchema, Default, PartialEq, Eq)]
 #[allow(non_snake_case)]
 #[serde(rename_all = "camelCase")]
