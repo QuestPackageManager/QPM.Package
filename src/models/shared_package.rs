@@ -2,7 +2,7 @@ use super::version_req::make_version_req_schema;
 use schemars::JsonSchema;
 use semver::{Version, VersionReq};
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::{collections::HashMap, path::PathBuf};
 
 use crate::models::triplet::TripletId;
 
@@ -55,5 +55,11 @@ pub struct SharedTripletDependencyInfo {
     // pub version_range: VersionReq,
 
     /// Original triplet data
+    /// This is the triplet ID of the original triplet that this dependency was restored from.
+    #[schemars(description = "Restored triplet ID of the dependency.")]
     pub restored_triplet: TripletId,
+
+    /// Binaries for this triplet
+    #[schemars(description = "Binaries for this triplet.")]
+    pub binaries: Vec<PathBuf>
 }
