@@ -73,6 +73,7 @@ impl PackageTripletsConfig {
             compile_options,
             qmod_url: found.qmod_url.clone().or(default.qmod_url.clone()),
             qmod_id: found.qmod_id.clone().or(default.qmod_id.clone()),
+            qmod_required: found.qmod_required.or(default.qmod_required),
         })
     }
 }
@@ -110,6 +111,11 @@ pub struct PackageTriplet {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[schemars(description = "QMod ID for this triplet.")]
     pub qmod_id: Option<String>,
+
+    /// QMod URL for this triplet
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[schemars(description = "QMod required for this triplet.")]
+    pub qmod_required: Option<bool>,
 }
 
 impl PackageTriplet {
