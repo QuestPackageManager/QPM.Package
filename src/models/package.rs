@@ -39,7 +39,7 @@ pub struct PackageConfig {
     /// Directory where dependencies are restored
     pub dependencies_directory: PathBuf,
     /// Directories shared by the package
-    pub shared_directories: Vec<PathBuf>,
+    pub shared_directories: PathBuf,
     /// Workspace configuration
     #[serde(default)]
     pub workspace: WorkspaceConfig,
@@ -95,7 +95,7 @@ impl Default for PackageConfig {
             id: DependencyId::default(),
             version: default_ver(),
             dependencies_directory: "extern".into(),
-            shared_directories: Vec::new(),
+            shared_directories: "shared".into(),
             workspace: Default::default(),
             additional_data: PackageAdditionalData::default(),
             triplets: PackageTripletsConfig::default(),
