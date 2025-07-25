@@ -55,7 +55,6 @@ impl PackageTripletsConfig {
         let mut dependencies = found.dependencies.clone();
         dependencies.extend(default.dependencies.clone());
 
-
         let mut dev_dependencies = found.dependencies.clone();
         dev_dependencies.extend(default.dev_dependencies.clone());
 
@@ -108,14 +107,17 @@ pub struct PackageTriplet {
 }
 
 impl PackageTriplet {
-
     pub fn get_dependency(&self, dep_id: &DependencyId) -> Option<&PackageTripletDependency> {
-        self.dependencies.get(dep_id).or_else(|| {
-            self.dev_dependencies.get(dep_id)
-        })
+        self.dependencies
+            .get(dep_id)
+            .or_else(|| self.dev_dependencies.get(dep_id))
     }
 
-    
+    pub fn get_dependencies_combined(
+        &self,
+    ) -> impl Iterator<Item = (&DependencyId, &PackageTripletDependency)> {
+        self.dependencies.iter().chain(self.dev_dependencies.iter())
+    }
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, JsonSchema, Default, PartialEq, Eq)]
