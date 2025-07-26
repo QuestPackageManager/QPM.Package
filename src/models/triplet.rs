@@ -1,4 +1,4 @@
-use std::{collections::HashMap, fmt::Display, path::PathBuf};
+use std::{borrow::Cow, collections::HashMap, fmt::Display, path::PathBuf};
 
 use schemars::JsonSchema;
 use semver::VersionReq;
@@ -74,6 +74,29 @@ impl PackageTripletsConfig {
             out_binaries: found.out_binaries.clone().or(default.out_binaries.clone()),
             qmod_url: found.qmod_url.clone().or(default.qmod_url.clone()),
             qmod_id: found.qmod_id.clone().or(default.qmod_id.clone()),
+        })
+    }
+
+    /// Iterates over all triplets, including the default one.
+    pub fn iter_triplets(&self) -> impl Iterator<Item = (TripletId, Cow<PackageTriplet>)> {
+        let other = self.specific_triplets.keys().map(|k| {
+            let package_triplet = self.get_triplet_settings(k).unwrap();
+
+            (k.clone(), Cow::Owned(package_triplet))
+        });
+
+        let value = (
+            TripletId("default".to_string()),
+            Cow::Borrowed(&self.default),
+        );
+
+        std::iter::once(value).chain(other)
+    }
+
+    pub fn iter_non_default_triplets(&self) -> impl Iterator<Item = (&TripletId, PackageTriplet)> {
+        self.specific_triplets.keys().map(|k| {
+            let package_triplet = self.get_triplet_settings(k).unwrap();
+            (k, package_triplet)
         })
     }
 }
