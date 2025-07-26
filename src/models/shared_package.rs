@@ -4,7 +4,7 @@ use semver::{Version, VersionReq};
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, path::PathBuf};
 
-use crate::models::triplet::TripletId;
+use crate::models::triplet::{TripletEnvironmentMap, TripletId};
 
 use super::package::{DependencyId, PackageConfig};
 
@@ -29,6 +29,7 @@ pub struct SharedPackageConfig {
     pub locked_triplet: SharedLockedTripletMap,
 }
 
+
 #[derive(Serialize, Deserialize, JsonSchema, Clone, Debug, PartialEq, Eq)]
 #[allow(non_snake_case)]
 #[serde(rename_all = "camelCase")]
@@ -39,7 +40,7 @@ pub struct SharedTriplet {
     pub restored_dependencies: HashMap<DependencyId, SharedTripletDependencyInfo>,
 
     #[schemars(description = "Environment variables for the triplet.")]
-    pub env: HashMap<String, String>,
+    pub env: TripletEnvironmentMap,
     // default should not appear here. All triplets should be listed
     // TODO: Include checksums here?
     // TODO: Include qpkg urls here?
@@ -68,5 +69,5 @@ pub struct SharedTripletDependencyInfo {
 
     /// Restored environment variables for the triplet
     #[schemars(description = "Restored environment variables for the triplet.")]
-    pub restored_env: HashMap<String, String>,
+    pub restored_env: TripletEnvironmentMap,
 }

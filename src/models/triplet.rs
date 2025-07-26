@@ -17,6 +17,11 @@ pub type TripletDependencyMap = HashMap<DependencyId, PackageTripletDependency>;
 /// ENV -> VALUE
 pub type TripletEnvironmentMap = HashMap<String, String>;
 
+/// Represents the game id for a QMOD package.
+pub const QPM_ENV_GAME_ID: &str = "QMOD_GAME_ID";
+/// Represents the game version for a QMOD package.
+pub const QPM_ENV_GAME_VERSION: &str = "QMOD_GAME_VERSION";
+
 pub fn default_triplet_id() -> TripletId {
     TripletId("default".to_owned())
 }
