@@ -23,7 +23,7 @@ pub fn package_target_version() -> Version {
 
 pub const QPM_JSON: &str = "qpm2.json";
 
-#[derive(Serialize, Deserialize, Clone, Debug, JsonSchema, Default, PartialEq, Eq, Hash)]
+#[derive(Serialize, Deserialize, Clone, Debug, JsonSchema, Default, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct DependencyId(pub String);
 
 // qpm.json

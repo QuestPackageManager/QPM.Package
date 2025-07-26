@@ -8,7 +8,7 @@ use super::version_req::make_version_req_schema;
 
 use crate::models::{extra::PackageTripletCompileOptions, package::DependencyId};
 
-#[derive(Serialize, Deserialize, Clone, Debug, JsonSchema, Default, PartialEq, Eq, Hash)]
+#[derive(Serialize, Deserialize, Clone, Debug, JsonSchema, Default, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct TripletId(pub String);
 
 /// Dependency ID -> Dependency
