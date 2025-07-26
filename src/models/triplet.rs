@@ -17,6 +17,10 @@ pub type TripletDependencyMap = HashMap<DependencyId, PackageTripletDependency>;
 /// ENV -> VALUE
 pub type TripletEnvironmentMap = HashMap<String, String>;
 
+pub fn default_triplet_id() -> TripletId {
+    TripletId("default".to_owned())
+}
+
 /// Package triplet configuration
 #[derive(Serialize, Deserialize, Clone, Debug, JsonSchema, Default, PartialEq, Eq)]
 #[allow(non_snake_case)]
@@ -49,6 +53,10 @@ impl PackageTripletsConfig {
     /// * `Some(PackageTripletSettings)` if the triplet exists in the configuration
     /// * `None` if the triplet is not found in the specific_triplets map
     pub fn get_triplet_settings(&self, triplet: &TripletId) -> Option<PackageTriplet> {
+        if triplet == &default_triplet_id() {
+            return Some(self.default.clone());
+        }
+
         let found = self.specific_triplets.get(triplet)?;
 
         let default = &self.default;
@@ -86,7 +94,7 @@ impl PackageTripletsConfig {
         });
 
         let value = (
-            TripletId("default".to_string()),
+            default_triplet_id(),
             Cow::Borrowed(&self.default),
         );
 
