@@ -37,6 +37,9 @@ pub struct SharedTriplet {
     /// Triplet map
     #[schemars(description = "Triplet map")]
     pub restored_dependencies: HashMap<DependencyId, SharedTripletDependencyInfo>,
+
+    #[schemars(description = "Environment variables for the triplet.")]
+    pub env: HashMap<String, String>,
     // default should not appear here. All triplets should be listed
     // TODO: Include checksums here?
     // TODO: Include qpkg urls here?
@@ -61,5 +64,9 @@ pub struct SharedTripletDependencyInfo {
 
     /// Binaries restored for this triplet
     #[schemars(description = "Binaries for this triplet.")]
-    pub restored_binaries: Vec<PathBuf>
+    pub restored_binaries: Vec<PathBuf>,
+
+    /// Restored environment variables for the triplet
+    #[schemars(description = "Restored environment variables for the triplet.")]
+    pub restored_env: HashMap<String, String>,
 }
