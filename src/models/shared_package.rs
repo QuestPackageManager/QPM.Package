@@ -59,7 +59,7 @@ pub struct SharedTripletDependencyInfo {
     #[schemars(description = "Restored triplet ID of the dependency.")]
     pub restored_triplet: TripletId,
 
-    /// Binaries for this triplet
+    /// Binaries restored for this triplet
     #[schemars(description = "Binaries for this triplet.")]
-    pub binaries: Vec<PathBuf>
+    pub restored_binaries: Vec<PathBuf>
 }

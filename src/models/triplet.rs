@@ -1,4 +1,4 @@
-use std::{collections::HashMap, fmt::Display};
+use std::{collections::HashMap, fmt::Display, path::PathBuf};
 
 use schemars::JsonSchema;
 use semver::VersionReq;
@@ -71,6 +71,7 @@ impl PackageTripletsConfig {
             dev_dependencies,
             env,
             compile_options,
+            out_binaries: found.out_binaries.clone().or(default.out_binaries.clone()),
             qmod_url: found.qmod_url.clone().or(default.qmod_url.clone()),
             qmod_id: found.qmod_id.clone().or(default.qmod_id.clone()),
         })
@@ -110,6 +111,11 @@ pub struct PackageTriplet {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[schemars(description = "QMod ID for this triplet.")]
     pub qmod_id: Option<String>,
+
+    /// Output binaries for this triplet
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[schemars(description = "Output binaries for this triplet.")]
+    pub out_binaries: Option<Vec<PathBuf>>,
 }
 
 impl PackageTriplet {

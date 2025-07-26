@@ -6,6 +6,8 @@ use crate::models::triplet::TripletId;
 
 pub const QPKG_JSON: &str = "qpm2.qpkg.json";
 
+/// QPKG package configuration
+/// Distributes a package with all triplet binaries and their headers.
 #[derive(Serialize, Deserialize, JsonSchema, Clone, Debug, PartialEq, Eq)]
 #[allow(non_snake_case)]
 #[serde(rename_all = "camelCase")]
