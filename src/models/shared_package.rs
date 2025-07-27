@@ -42,9 +42,10 @@ pub struct SharedTriplet {
     #[schemars(description = "Environment variables for the triplet.")]
     pub env: TripletEnvironmentMap,
 
-    /// Output binaries for this triplet
-    #[schemars(description = "Output binaries for this triplet.")]
-    pub out_binaries: Vec<PathBuf>,
+    // /// Output binaries for this triplet
+    // #[schemars(description = "Output binaries for this triplet.")]
+    // pub out_binaries: Vec<PathBuf>,
+    
     // default should not appear here. All triplets should be listed
     // TODO: Include checksums here?
     // TODO: Include qpkg urls here?
