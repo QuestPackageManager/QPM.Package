@@ -90,6 +90,21 @@ impl PackageTripletsConfig {
         })
     }
 
+    pub fn get_triplet(&self, triplet: &TripletId) -> Option<&PackageTriplet> {
+        if triplet == &default_triplet_id() {
+            return Some(&self.default);
+        }
+
+        self.specific_triplets.get(triplet)
+    }
+    pub fn get_triplet_mut(&mut self, triplet: &TripletId) -> Option<&mut PackageTriplet> {
+        if triplet == &default_triplet_id() {
+            return Some(&mut self.default);
+        }
+
+        self.specific_triplets.get_mut(triplet)
+    }
+
     /// Iterates over all triplets, including the default one.
     pub fn iter_triplets(&self) -> impl Iterator<Item = (TripletId, Cow<PackageTriplet>)> {
         let other = self.specific_triplets.keys().map(|k| {
