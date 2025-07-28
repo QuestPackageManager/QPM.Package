@@ -8,7 +8,9 @@ use super::version_req::make_version_req_schema;
 
 use crate::models::{extra::PackageTripletCompileOptions, package::DependencyId};
 
-#[derive(Serialize, Deserialize, Clone, Debug, JsonSchema, Default, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(
+    Serialize, Deserialize, Clone, Debug, JsonSchema, Default, PartialEq, Eq, Hash, PartialOrd, Ord,
+)]
 pub struct TripletId(pub String);
 
 /// Dependency ID -> Dependency
@@ -62,31 +64,32 @@ impl PackageTripletsConfig {
             return Some(self.default.clone());
         }
 
-        let found = self.specific_triplets.get(triplet)?;
+        let found = self.specific_triplets.get(triplet)?.clone();
+        let default = self.default.clone();
 
-        let default = &self.default;
-        let mut dependencies = found.dependencies.clone();
-        dependencies.extend(default.dependencies.clone());
+        let mut dependencies = found.dependencies;
+        dependencies.extend(default.dependencies);
 
-        let mut dev_dependencies = found.dependencies.clone();
-        dev_dependencies.extend(default.dev_dependencies.clone());
+        let mut dev_dependencies = found.dev_dependencies;
+        dev_dependencies.extend(default.dev_dependencies);
 
-        let mut env = found.env.clone();
-        env.extend(default.env.clone());
+        let mut env = found.env;
+        env.extend(default.env);
 
         let compile_options = found
             .compile_options
             .clone()
-            .map(|a| a.merge(self.default.compile_options.clone().unwrap_or_default()));
+            .map(|a| a.merge(default.compile_options.unwrap_or_default()));
 
         Some(PackageTriplet {
             dependencies,
             dev_dependencies,
             env,
             compile_options,
-            out_binaries: found.out_binaries.clone().or(default.out_binaries.clone()),
-            qmod_url: found.qmod_url.clone().or(default.qmod_url.clone()),
-            qmod_id: found.qmod_id.clone().or(default.qmod_id.clone()),
+            out_binaries: found.out_binaries.clone().or(default.out_binaries),
+            qmod_url: found.qmod_url.clone().or(default.qmod_url),
+            qmod_id: found.qmod_id.clone().or(default.qmod_id),
+            qmod_template: found.qmod_template.clone().or(default.qmod_template),
         })
     }
 
@@ -113,10 +116,7 @@ impl PackageTripletsConfig {
             (k.clone(), Cow::Owned(package_triplet))
         });
 
-        let value = (
-            default_triplet_id(),
-            Cow::Borrowed(&self.default),
-        );
+        let value = (default_triplet_id(), Cow::Borrowed(&self.default));
 
         std::iter::once(value).chain(other)
     }
@@ -162,6 +162,11 @@ pub struct PackageTriplet {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[schemars(description = "QMod ID for this triplet.")]
     pub qmod_id: Option<String>,
+
+    /// QMod template path for this triplet e.g mod.template.json
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[schemars(description = "QMod template for this triplet.")]
+    pub qmod_template: Option<PathBuf>,
 
     /// Output binaries for this triplet
     #[serde(skip_serializing_if = "Option::is_none")]
