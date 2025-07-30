@@ -9,9 +9,10 @@ use super::version_req::make_version_req_schema;
 use crate::models::{extra::PackageTripletCompileOptions, package::DependencyId};
 
 #[derive(
-    Serialize, Deserialize, Clone, Debug, JsonSchema, Default, PartialEq, Eq, Hash, PartialOrd, Ord,
+    Serialize, Deserialize, Clone, Debug, JsonSchema, PartialEq, Eq, Hash, PartialOrd, Ord,
 )]
 pub struct TripletId(pub String);
+
 
 /// Dependency ID -> Dependency
 pub type TripletDependencyMap = HashMap<DependencyId, PackageTripletDependency>;
@@ -25,7 +26,7 @@ pub const QPM_ENV_GAME_ID: &str = "QMOD_GAME_ID";
 pub const QPM_ENV_GAME_VERSION: &str = "QMOD_GAME_VERSION";
 
 pub fn default_triplet_id() -> TripletId {
-    TripletId("default".to_owned())
+    TripletId::default()
 }
 
 /// Package triplet configuration
@@ -197,8 +198,11 @@ pub struct PackageTripletDependency {
     #[serde(rename = "versionRange")]
     #[schemars(schema_with = "make_version_req_schema")]
     pub version_range: VersionReq,
+
     /// Target triplet
-    pub triplet: TripletId,
+    #[schemars(description = "Target triplet for this dependency.")]
+    pub triplet: Option<TripletId>,
+    
     /// Whether to include this dependency in the qmod
     #[serde(default)]
     pub qmod_export: bool,
@@ -212,5 +216,11 @@ pub struct PackageTripletDependency {
 impl Display for TripletId {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.0)
+    }
+}
+
+impl Default for TripletId {
+    fn default() -> Self {
+        TripletId("default".to_owned())
     }
 }
