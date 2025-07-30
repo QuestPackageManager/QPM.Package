@@ -199,10 +199,11 @@ pub struct PackageTripletDependency {
     #[schemars(schema_with = "make_version_req_schema")]
     pub version_range: VersionReq,
 
-    /// Target triplet
+    /// Target triplet. `default` if null
     #[schemars(description = "Target triplet for this dependency.")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub triplet: Option<TripletId>,
-    
+
     /// Whether to include this dependency in the qmod
     #[serde(default)]
     pub qmod_export: bool,
