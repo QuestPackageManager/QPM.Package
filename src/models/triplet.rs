@@ -208,9 +208,10 @@ pub struct PackageTripletDependency {
     #[serde(default)]
     pub qmod_export: bool,
 
-    /// QMod URL for this triplet
+    /// Whether this is required/optional in the qmod
+    /// QMod required field for this dependency
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[schemars(description = "QMod required for this triplet.")]
+    #[schemars(description = "QMod required field for this dependency.")]
     pub qmod_required: Option<bool>,
 }
 
