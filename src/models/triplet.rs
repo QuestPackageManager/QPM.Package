@@ -86,7 +86,7 @@ impl PackageTripletsConfig {
             .into_iter()
             .chain(default.qmod_include_files)
             .collect();
-        
+
         let qmod_include_dirs = found
             .qmod_include_dirs
             .into_iter()
@@ -110,14 +110,16 @@ impl PackageTripletsConfig {
         })
     }
 
-    pub fn get_triplet(&self, triplet: &TripletId) -> Option<&PackageTriplet> {
+    /// Retrieves the settings for a specific triplet without merging with default settings.
+    pub fn get_triplet_standalone(&self, triplet: &TripletId) -> Option<&PackageTriplet> {
         if triplet == &default_triplet_id() {
             return Some(&self.default);
         }
 
         self.specific_triplets.get(triplet)
     }
-    pub fn get_triplet_mut(&mut self, triplet: &TripletId) -> Option<&mut PackageTriplet> {
+    /// Retrieves the settings for a specific triplet, allowing mutable access.
+    pub fn get_triplet_standalone_mut(&mut self, triplet: &TripletId) -> Option<&mut PackageTriplet> {
         if triplet == &default_triplet_id() {
             return Some(&mut self.default);
         }
