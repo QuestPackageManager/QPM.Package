@@ -18,22 +18,4 @@ pub struct WorkspaceConfig {
     #[schemars(description = "Scripts associated with the workspace.")]
     pub scripts: BTreeMap<String, WorkspaceScript>,
 
-    /// NDK Version Range
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[schemars(description = "The NDK version range.")]
-    #[schemars(schema_with = "make_version_req_schema")]
-    pub ndk: Option<VersionReq>,
-
-    #[serde(default)]
-    #[schemars(description = "List of directories to search during qmod creation.")]
-    pub qmod_include_dirs: Vec<PathBuf>,
-
-    #[serde(default)]
-    #[schemars(description = "List of files to include in the resulting qmod.")]
-    pub qmod_include_files: Vec<PathBuf>,
-
-    #[serde(default)]
-    #[schemars(description = "Output path for the qmod.")]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub qmod_output: Option<PathBuf>,
 }

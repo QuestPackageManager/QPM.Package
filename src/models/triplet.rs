@@ -13,7 +13,6 @@ use crate::models::{extra::PackageTripletCompileOptions, package::DependencyId};
 )]
 pub struct TripletId(pub String);
 
-
 /// Dependency ID -> Dependency
 pub type TripletDependencyMap = HashMap<DependencyId, PackageTripletDependency>;
 
@@ -82,15 +81,32 @@ impl PackageTripletsConfig {
             .clone()
             .map(|a| a.merge(default.compile_options.unwrap_or_default()));
 
+        let qmod_include_files = found
+            .qmod_include_files
+            .into_iter()
+            .chain(default.qmod_include_files)
+            .collect();
+        
+        let qmod_include_dirs = found
+            .qmod_include_dirs
+            .into_iter()
+            .chain(default.qmod_include_dirs)
+            .collect();
+
         Some(PackageTriplet {
             dependencies,
             dev_dependencies,
             env,
             compile_options,
+            qmod_include_dirs,
+            qmod_include_files,
+
             out_binaries: found.out_binaries.clone().or(default.out_binaries),
             qmod_url: found.qmod_url.clone().or(default.qmod_url),
             qmod_id: found.qmod_id.clone().or(default.qmod_id),
             qmod_template: found.qmod_template.clone().or(default.qmod_template),
+            qmod_output: found.qmod_output.clone().or(default.qmod_output),
+            ndk: found.ndk.clone().or(default.ndk),
         })
     }
 
@@ -159,15 +175,34 @@ pub struct PackageTriplet {
     #[schemars(description = "QMod URL for this triplet.")]
     pub qmod_url: Option<String>,
 
-    /// QMod URL for this triplet
+    /// QMod ID for this triplet
     #[serde(skip_serializing_if = "Option::is_none")]
     #[schemars(description = "QMod ID for this triplet.")]
     pub qmod_id: Option<String>,
+
+    #[serde(default)]
+    #[schemars(description = "List of directories to search during qmod creation.")]
+    pub qmod_include_dirs: Vec<PathBuf>,
+
+    #[serde(default)]
+    #[schemars(description = "List of files to include in the resulting qmod.")]
+    pub qmod_include_files: Vec<PathBuf>,
+
+    #[serde(default)]
+    #[schemars(description = "Output path for the qmod.")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub qmod_output: Option<PathBuf>,
 
     /// QMod template path for this triplet e.g mod.template.json
     #[serde(skip_serializing_if = "Option::is_none")]
     #[schemars(description = "QMod template for this triplet.")]
     pub qmod_template: Option<PathBuf>,
+
+    /// NDK Version Range
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[schemars(description = "The NDK version range.")]
+    #[schemars(schema_with = "make_version_req_schema")]
+    pub ndk: Option<VersionReq>,
 
     /// Output binaries for this triplet
     #[serde(skip_serializing_if = "Option::is_none")]
