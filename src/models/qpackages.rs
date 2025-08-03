@@ -1,7 +1,13 @@
 use schemars::JsonSchema;
+use semver::Version;
 use serde::{Deserialize, Serialize};
 
 use super::package::PackageConfig;
+
+pub struct QPackagesVersion {
+    pub id: String,
+    pub version: Version,
+}
 
 #[derive(Serialize, Deserialize, JsonSchema, Clone, Debug, PartialEq, Eq)]
 #[allow(non_snake_case)]
