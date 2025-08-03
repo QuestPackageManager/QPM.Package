@@ -2,10 +2,13 @@ use schemars::JsonSchema;
 use semver::Version;
 use serde::{Deserialize, Serialize};
 
+use crate::models::package::DependencyId;
+
 use super::package::PackageConfig;
 
+#[derive(Serialize, Deserialize, JsonSchema, Clone, Debug, PartialEq, Eq)]
 pub struct QPackagesVersion {
-    pub id: String,
+    pub id: DependencyId,
     pub version: Version,
 }
 
