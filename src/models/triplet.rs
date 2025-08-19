@@ -24,7 +24,7 @@ pub const QPM_ENV_GAME_ID: &str = "QMOD_GAME_ID";
 /// Represents the game version for a QMOD package.
 pub const QPM_ENV_GAME_VERSION: &str = "QMOD_GAME_VERSION";
 
-pub fn default_triplet_id() -> TripletId {
+pub fn base_triplet_id() -> TripletId {
     TripletId::default()
 }
 
@@ -34,9 +34,13 @@ pub fn default_triplet_id() -> TripletId {
 #[serde(rename_all = "camelCase")]
 #[schemars(description = "Configuration for a package's triplets map")]
 pub struct PackageTripletsConfig {
+    /// Default triplet ID for this package.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub default: Option<TripletId>,
+
     /// Default configuration for all triplets. All triplets will inherit from this.
     #[serde(default)]
-    pub default: PackageTriplet,
+    pub base: PackageTriplet,
     /// Configuration for specific triplets
     #[serde(flatten)]
     pub specific_triplets: HashMap<TripletId, PackageTriplet>,
@@ -60,37 +64,37 @@ impl PackageTripletsConfig {
     /// * `Some(PackageTripletSettings)` if the triplet exists in the configuration
     /// * `None` if the triplet is not found in the specific_triplets map
     pub fn get_triplet_settings(&self, triplet: &TripletId) -> Option<PackageTriplet> {
-        if triplet == &default_triplet_id() {
-            return Some(self.default.clone());
+        if triplet == &base_triplet_id() {
+            return Some(self.base.clone());
         }
 
         let found = self.specific_triplets.get(triplet)?.clone();
-        let default = self.default.clone();
+        let base = self.base.clone();
 
         let mut dependencies = found.dependencies;
-        dependencies.extend(default.dependencies);
+        dependencies.extend(base.dependencies);
 
         let mut dev_dependencies = found.dev_dependencies;
-        dev_dependencies.extend(default.dev_dependencies);
+        dev_dependencies.extend(base.dev_dependencies);
 
         let mut env = found.env;
-        env.extend(default.env);
+        env.extend(base.env);
 
         let compile_options = found
             .compile_options
             .clone()
-            .map(|a| a.merge(default.compile_options.unwrap_or_default()));
+            .map(|a| a.merge(base.compile_options.unwrap_or_default()));
 
         let qmod_include_files = found
             .qmod_include_files
             .into_iter()
-            .chain(default.qmod_include_files)
+            .chain(base.qmod_include_files)
             .collect();
 
         let qmod_include_dirs = found
             .qmod_include_dirs
             .into_iter()
-            .chain(default.qmod_include_dirs)
+            .chain(base.qmod_include_dirs)
             .collect();
 
         Some(PackageTriplet {
@@ -101,27 +105,27 @@ impl PackageTripletsConfig {
             qmod_include_dirs,
             qmod_include_files,
 
-            out_binaries: found.out_binaries.clone().or(default.out_binaries),
-            qmod_url: found.qmod_url.clone().or(default.qmod_url),
-            qmod_id: found.qmod_id.clone().or(default.qmod_id),
-            qmod_template: found.qmod_template.clone().or(default.qmod_template),
-            qmod_output: found.qmod_output.clone().or(default.qmod_output),
-            ndk: found.ndk.clone().or(default.ndk),
+            out_binaries: found.out_binaries.clone().or(base.out_binaries),
+            qmod_url: found.qmod_url.clone().or(base.qmod_url),
+            qmod_id: found.qmod_id.clone().or(base.qmod_id),
+            qmod_template: found.qmod_template.clone().or(base.qmod_template),
+            qmod_output: found.qmod_output.clone().or(base.qmod_output),
+            ndk: found.ndk.clone().or(base.ndk),
         })
     }
 
     /// Retrieves the settings for a specific triplet without merging with default settings.
     pub fn get_triplet_standalone(&self, triplet: &TripletId) -> Option<&PackageTriplet> {
-        if triplet == &default_triplet_id() {
-            return Some(&self.default);
+        if triplet == &base_triplet_id() {
+            return Some(&self.base);
         }
 
         self.specific_triplets.get(triplet)
     }
     /// Retrieves the settings for a specific triplet, allowing mutable access.
     pub fn get_triplet_standalone_mut(&mut self, triplet: &TripletId) -> Option<&mut PackageTriplet> {
-        if triplet == &default_triplet_id() {
-            return Some(&mut self.default);
+        if triplet == &base_triplet_id() {
+            return Some(&mut self.base);
         }
 
         self.specific_triplets.get_mut(triplet)
@@ -135,12 +139,12 @@ impl PackageTripletsConfig {
             (k.clone(), Cow::Owned(package_triplet))
         });
 
-        let value = (default_triplet_id(), Cow::Borrowed(&self.default));
+        let value = (base_triplet_id(), Cow::Borrowed(&self.base));
 
         std::iter::once(value).chain(other)
     }
 
-    pub fn iter_non_default_triplets(&self) -> impl Iterator<Item = (&TripletId, PackageTriplet)> {
+    pub fn iter_non_base_triplets(&self) -> impl Iterator<Item = (&TripletId, PackageTriplet)> {
         self.specific_triplets.keys().map(|k| {
             let package_triplet = self.get_triplet_settings(k).unwrap();
             (k, package_triplet)
