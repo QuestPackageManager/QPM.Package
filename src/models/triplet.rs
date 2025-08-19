@@ -272,6 +272,6 @@ impl Display for TripletId {
 
 impl Default for TripletId {
     fn default() -> Self {
-        TripletId("default".to_owned())
+        TripletId("base".to_owned())
     }
 }
