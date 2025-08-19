@@ -47,6 +47,11 @@ pub struct PackageTripletsConfig {
 }
 
 impl PackageTripletsConfig {
+    pub fn get_default_triplet(&self) -> Option<PackageTriplet> {
+        let default = self.default.as_ref()?;
+        self.get_triplet_settings(default)
+    }
+
     /// Retrieves the settings for a specific triplet, merging with default settings.
     ///
     /// This function looks up settings for the specified triplet and combines them with
@@ -123,7 +128,10 @@ impl PackageTripletsConfig {
         self.specific_triplets.get(triplet)
     }
     /// Retrieves the settings for a specific triplet, allowing mutable access.
-    pub fn get_triplet_standalone_mut(&mut self, triplet: &TripletId) -> Option<&mut PackageTriplet> {
+    pub fn get_triplet_standalone_mut(
+        &mut self,
+        triplet: &TripletId,
+    ) -> Option<&mut PackageTriplet> {
         if triplet == &base_triplet_id() {
             return Some(&mut self.base);
         }
