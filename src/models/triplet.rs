@@ -11,6 +11,7 @@ use crate::models::{extra::PackageTripletCompileOptions, package::DependencyId};
 #[derive(
     Serialize, Deserialize, Clone, Debug, JsonSchema, PartialEq, Eq, Hash, PartialOrd, Ord,
 )]
+#[repr(transparent)]
 pub struct TripletId(pub String);
 
 /// Dependency ID -> Dependency
@@ -39,17 +40,17 @@ pub struct PackageTripletsConfig {
     pub default: Option<TripletId>,
 
     /// Default configuration for all triplets. All triplets will inherit from this.
-    #[serde(default)]
-    pub base: PackageTriplet,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub base: Option<PackageTriplet>,
     /// Configuration for specific triplets
     #[serde(flatten)]
     pub specific_triplets: HashMap<TripletId, PackageTriplet>,
 }
 
 impl PackageTripletsConfig {
-    pub fn get_default_triplet(&self) -> Option<PackageTriplet> {
+    pub fn get_default_triplet(&'_ self) -> Option<Cow<'_, PackageTriplet>> {
         let default = self.default.as_ref()?;
-        self.get_triplet_settings(default)
+        self.get_merged_triplet(default)
     }
 
     /// Retrieves the settings for a specific triplet, merging with default settings.
@@ -68,13 +69,16 @@ impl PackageTripletsConfig {
     /// # Returns
     /// * `Some(PackageTripletSettings)` if the triplet exists in the configuration
     /// * `None` if the triplet is not found in the specific_triplets map
-    pub fn get_triplet_settings(&self, triplet: &TripletId) -> Option<PackageTriplet> {
+    pub fn get_merged_triplet(&'_ self, triplet: &TripletId) -> Option<Cow<'_, PackageTriplet>> {
         if triplet == &base_triplet_id() {
-            return Some(self.base.clone());
+            return self.base.as_ref().map(Cow::Borrowed);
         }
 
+        let Some(base) = self.base.clone() else {
+            return self.specific_triplets.get(triplet).map(Cow::Borrowed);
+        };
+
         let found = self.specific_triplets.get(triplet)?.clone();
-        let base = self.base.clone();
 
         let mut dependencies = found.dependencies;
         dependencies.extend(base.dependencies);
@@ -102,7 +106,7 @@ impl PackageTripletsConfig {
             .chain(base.qmod_include_dirs)
             .collect();
 
-        Some(PackageTriplet {
+        let package_triplet = PackageTriplet {
             dependencies,
             dev_dependencies,
             env,
@@ -116,13 +120,14 @@ impl PackageTripletsConfig {
             qmod_template: found.qmod_template.clone().or(base.qmod_template),
             qmod_output: found.qmod_output.clone().or(base.qmod_output),
             ndk: found.ndk.clone().or(base.ndk),
-        })
+        };
+        Some(Cow::Owned(package_triplet))
     }
 
     /// Retrieves the settings for a specific triplet without merging with default settings.
     pub fn get_triplet_standalone(&self, triplet: &TripletId) -> Option<&PackageTriplet> {
         if triplet == &base_triplet_id() {
-            return Some(&self.base);
+            return self.base.as_ref();
         }
 
         self.specific_triplets.get(triplet)
@@ -133,28 +138,32 @@ impl PackageTripletsConfig {
         triplet: &TripletId,
     ) -> Option<&mut PackageTriplet> {
         if triplet == &base_triplet_id() {
-            return Some(&mut self.base);
+            return self.base.as_mut();
         }
 
         self.specific_triplets.get_mut(triplet)
     }
 
     /// Iterates over all triplets, including the default one.
-    pub fn iter_triplets(&self) -> impl Iterator<Item = (TripletId, Cow<PackageTriplet>)> {
-        let other = self.specific_triplets.keys().map(|k| {
-            let package_triplet = self.get_triplet_settings(k).unwrap();
+    pub fn iter_merged_triplets(
+        &'_ self,
+    ) -> impl Iterator<Item = (TripletId, Cow<'_, PackageTriplet>)> {
+        self.specific_triplets
+            .keys()
+            .cloned()
+            .chain(std::iter::once(base_triplet_id()))
+            .map(|k| {
+                let package_triplet = self.get_merged_triplet(&k).unwrap();
 
-            (k.clone(), Cow::Owned(package_triplet))
-        });
-
-        let value = (base_triplet_id(), Cow::Borrowed(&self.base));
-
-        std::iter::once(value).chain(other)
+                (k.clone(), package_triplet)
+            })
     }
 
-    pub fn iter_non_base_triplets(&self) -> impl Iterator<Item = (&TripletId, PackageTriplet)> {
+    pub fn iter_merged_specific_triplets(
+        &'_ self,
+    ) -> impl Iterator<Item = (&'_ TripletId, Cow<'_, PackageTriplet>)> {
         self.specific_triplets.keys().map(|k| {
-            let package_triplet = self.get_triplet_settings(k).unwrap();
+            let package_triplet = self.get_merged_triplet(k).unwrap();
             (k, package_triplet)
         })
     }
@@ -174,7 +183,6 @@ pub struct PackageTriplet {
     #[serde(default)]
     pub dev_dependencies: TripletDependencyMap,
 
-    // TODO: use PackageTripletSettings
     /// Environment variables for this triplet.
     #[serde(default)]
     pub env: TripletEnvironmentMap,
