@@ -1,10 +1,8 @@
-use std::{collections::BTreeMap, path::PathBuf};
+use std::collections::BTreeMap;
 
 use schemars::JsonSchema;
-use semver::VersionReq;
 use serde::{Deserialize, Serialize};
 
-use crate::models::version_req::make_version_req_schema;
 
 pub type WorkspaceScript = Vec<String>;
 
