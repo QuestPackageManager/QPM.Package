@@ -152,10 +152,10 @@ impl PackageTripletsConfig {
             .keys()
             .cloned()
             .chain(std::iter::once(base_triplet_id()))
-            .map(|k| {
-                let package_triplet = self.get_merged_triplet(&k).unwrap();
+            .filter_map(|k| {
+                let package_triplet = self.get_merged_triplet(&k)?;
 
-                (k.clone(), package_triplet)
+                Some((k.clone(), package_triplet))
             })
     }
 
