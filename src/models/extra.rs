@@ -14,15 +14,15 @@ use serde::{Deserialize, Serialize};
     description = "Additional options for compilation and edits to compilation related files."
 )]
 pub struct PackageTripletCompileOptions {
-    /// Additional include paths to add, relative to the extern directory.
+    /// Additional include paths to add, relative to the extern package's shared directory.
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[schemars(description = "Additional include paths to add, relative to the extern directory.")]
+    #[schemars(description = "Additional include paths to add, relative to the extern package's shared directory.")]
     pub include_paths: Option<Vec<String>>,
 
-    /// Additional system include paths to add, relative to the extern directory.
+    /// Additional system include paths to add, relative to the extern package's shared directory.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[schemars(
-        description = "Additional system include paths to add, relative to the extern directory."
+        description = "Additional system include paths to add, relative to the extern package's shared directory."
     )]
     pub system_includes: Option<Vec<String>>,
 
