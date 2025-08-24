@@ -271,7 +271,7 @@
           }
         },
         "includePaths": {
-          "description": "Additional include paths to add, relative to the extern directory.",
+          "description": "Additional include paths to add, relative to the extern package's shared directory.",
           "type": [
             "array",
             "null"
@@ -281,7 +281,7 @@
           }
         },
         "systemIncludes": {
-          "description": "Additional system include paths to add, relative to the extern directory.",
+          "description": "Additional system include paths to add, relative to the extern package's shared directory.",
           "type": [
             "array",
             "null"
@@ -338,18 +338,25 @@
       "description": "Configuration for a package's triplets map",
       "type": "object",
       "properties": {
-        "default": {
+        "base": {
           "description": "Default configuration for all triplets. All triplets will inherit from this.",
-          "default": {
-            "dependencies": {},
-            "devDependencies": {},
-            "env": {},
-            "qmodIncludeDirs": [],
-            "qmodIncludeFiles": []
-          },
-          "allOf": [
+          "anyOf": [
             {
               "$ref": "#/definitions/PackageTriplet"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "default": {
+          "description": "Default triplet ID for this package.",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/TripletId"
+            },
+            {
+              "type": "null"
             }
           ]
         }
