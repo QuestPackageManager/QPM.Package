@@ -13,7 +13,7 @@ use serde::{Deserialize, Serialize};
 #[schemars(
     description = "Additional options for compilation and edits to compilation related files."
 )]
-pub struct PackageTripletCompileOptions {
+pub struct PackageCompileOptions {
     /// Additional include paths to add, relative to the extern package's shared directory.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[schemars(description = "Additional include paths to add, relative to the extern package's shared directory.")]
@@ -37,8 +37,8 @@ pub struct PackageTripletCompileOptions {
     pub c_flags: Option<Vec<String>>,
 }
 
-impl PackageTripletCompileOptions {
-    pub fn merge(self, other: PackageTripletCompileOptions) -> Self {
+impl PackageCompileOptions {
+    pub fn merge(self, other: PackageCompileOptions) -> Self {
         Self {
             c_flags: self.c_flags.or(other.c_flags),
             cpp_flags: self.cpp_flags.or(other.cpp_flags),
@@ -47,20 +47,3 @@ impl PackageTripletCompileOptions {
         }
     }
 }
-
-// #[derive(Serialize, Deserialize, Clone, Debug, Default, JsonSchema, PartialEq, Eq)]
-// pub struct PackageTripletSettings {
-//     /// Environment variables for this triplet.
-//     #[serde(default)]
-//     pub env: TripletEnvironmentMap,
-
-//     /// Additional Compile options to be used with this package
-//     #[serde(skip_serializing_if = "Option::is_none")]
-//     #[schemars(description = "Additional compile options for the package.")]
-//     pub compile_options: Option<PackageTripletCompileOptions>,
-
-//     /// QMod URL for this triplet
-//     #[serde(skip_serializing_if = "Option::is_none")]
-//     #[schemars(description = "QMod URL for this triplet.")]
-//     pub qmod_url: Option<String>,
-// }

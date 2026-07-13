@@ -6,8 +6,8 @@
   "required": [
     "dependenciesDirectory",
     "id",
+    "ndk",
     "sharedDirectory",
-    "triplets",
     "version"
   ],
   "properties": {
@@ -31,15 +31,50 @@
         "null"
       ]
     },
+    "compileOptions": {
+      "description": "Additional compile options for the package.",
+      "anyOf": [
+        {
+          "$ref": "#/definitions/PackageCompileOptions"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
     "configVersion": {
       "description": "Config version, defaults to 2.0.0",
       "default": "2.0.0",
       "type": "string",
       "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$"
     },
+    "dependencies": {
+      "description": "Dependencies for this package",
+      "default": {},
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/PackageDependency"
+      }
+    },
     "dependenciesDirectory": {
       "description": "Directory where dependencies are restored",
       "type": "string"
+    },
+    "devDependencies": {
+      "description": "Dev dependencies for this package",
+      "default": {},
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/PackageDependency"
+      }
+    },
+    "env": {
+      "description": "Environment variables for this package.",
+      "default": {},
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
     },
     "id": {
       "description": "Package ID",
@@ -47,6 +82,70 @@
         {
           "$ref": "#/definitions/DependencyId"
         }
+      ]
+    },
+    "ndk": {
+      "description": "The NDK version range.",
+      "type": "string",
+      "properties": {
+        "format": {
+          "title": "String",
+          "type": "string"
+        }
+      }
+    },
+    "outBinaries": {
+      "description": "Output binaries for this package.",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "string"
+      }
+    },
+    "qmodId": {
+      "description": "QMod ID for this package.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "qmodIncludeDirs": {
+      "description": "List of directories to search during qmod creation.",
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "qmodIncludeFiles": {
+      "description": "List of files to include in the resulting qmod.",
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "qmodOutput": {
+      "description": "Output path for the qmod.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "qmodTemplate": {
+      "description": "QMod template for this package.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "qmodUrl": {
+      "description": "QMod URL for this package.",
+      "type": [
+        "string",
+        "null"
       ]
     },
     "sharedDirectory": {
@@ -58,14 +157,6 @@
       "type": [
         "string",
         "null"
-      ]
-    },
-    "triplets": {
-      "description": "Package triplet configurations",
-      "allOf": [
-        {
-          "$ref": "#/definitions/PackageTripletsConfig"
-        }
       ]
     },
     "version": {
@@ -109,115 +200,7 @@
         }
       }
     },
-    "PackageTriplet": {
-      "description": "Configuration for a package triplet.",
-      "type": "object",
-      "required": [
-        "ndk"
-      ],
-      "properties": {
-        "compileOptions": {
-          "description": "Additional compile options for the package.",
-          "anyOf": [
-            {
-              "$ref": "#/definitions/PackageTripletCompileOptions"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
-        "dependencies": {
-          "description": "Dependencies for this triplet",
-          "default": {},
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/PackageTripletDependency"
-          }
-        },
-        "devDependencies": {
-          "description": "Dependencies for this triplet",
-          "default": {},
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/PackageTripletDependency"
-          }
-        },
-        "env": {
-          "description": "Environment variables for this triplet.",
-          "default": {},
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "ndk": {
-          "description": "The NDK version range.",
-          "type": "string",
-          "properties": {
-            "format": {
-              "title": "String",
-              "type": "string"
-            }
-          }
-        },
-        "outBinaries": {
-          "description": "Output binaries for this triplet.",
-          "type": [
-            "array",
-            "null"
-          ],
-          "items": {
-            "type": "string"
-          }
-        },
-        "qmodId": {
-          "description": "QMod ID for this triplet.",
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "qmodIncludeDirs": {
-          "description": "List of directories to search during qmod creation.",
-          "default": [],
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "qmodIncludeFiles": {
-          "description": "List of files to include in the resulting qmod.",
-          "default": [],
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "qmodOutput": {
-          "description": "Output path for the qmod.",
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "qmodTemplate": {
-          "description": "QMod template for this triplet.",
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "qmodUrl": {
-          "description": "QMod URL for this triplet.",
-          "type": [
-            "string",
-            "null"
-          ]
-        }
-      }
-    },
-    "PackageTripletCompileOptions": {
+    "PackageCompileOptions": {
       "description": "Additional options for compilation and edits to compilation related files.",
       "type": "object",
       "properties": {
@@ -263,8 +246,8 @@
         }
       }
     },
-    "PackageTripletDependency": {
-      "description": "Dependency information for a package triplet.",
+    "PackageDependency": {
+      "description": "Dependency information for a package.",
       "type": "object",
       "required": [
         "versionRange"
@@ -282,17 +265,6 @@
             "null"
           ]
         },
-        "triplet": {
-          "description": "Target triplet for this dependency.",
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TripletId"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
         "versionRange": {
           "description": "Version range requirement",
           "type": "string",
@@ -304,37 +276,6 @@
           }
         }
       }
-    },
-    "PackageTripletsConfig": {
-      "description": "Configuration for a package's triplets map",
-      "type": "object",
-      "properties": {
-        "base": {
-          "description": "Default configuration for all triplets. All triplets will inherit from this.",
-          "anyOf": [
-            {
-              "$ref": "#/definitions/PackageTriplet"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
-        "default": {
-          "description": "Default triplet ID for this package.",
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TripletId"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        }
-      }
-    },
-    "TripletId": {
-      "type": "string"
     },
     "WorkspaceConfig": {
       "description": "Configuration for the workspace.",

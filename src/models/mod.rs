@@ -1,5 +1,4 @@
 pub mod package;
-pub mod triplet;
 pub mod workspace;
 
 pub mod extra;
