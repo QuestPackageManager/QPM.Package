@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 use std::fmt::Display;
 use std::path::PathBuf;
 
@@ -9,7 +8,7 @@ use serde::{Deserialize, Serialize};
 use crate::models::extra::PackageCompileOptions;
 
 use super::version_req::make_version_req_schema;
-use super::workspace::WorkspaceConfig;
+pub use super::workspace::{WorkspaceConfig, EnvironmentMap};
 
 #[inline]
 fn default_ver() -> Version {
@@ -30,16 +29,61 @@ pub const QPM_ENV_GAME_ID: &str = "QMOD_GAME_ID";
 /// Represents the game version for a QMOD package.
 pub const QPM_ENV_GAME_VERSION: &str = "QMOD_GAME_VERSION";
 
+/// QMod configuration
+#[derive(Serialize, Deserialize, JsonSchema, Clone, Debug, PartialEq, Eq, Default)]
+#[allow(non_snake_case)]
+#[serde(rename_all = "camelCase")]
+#[schemars(description = "QMod package configuration.")]
+pub struct QmodConfig {
+    /// The output name of the QMOD file
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[schemars(description = "The output name of the QMOD, default to something based on the package ID.")]
+    pub output: Option<PathBuf>,
+
+    /// The template path for the mod.json
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[schemars(description = "The template path for the mod.json, default to mod.template.json.")]
+    pub template: Option<PathBuf>,
+
+    /// Directories to search during qmod creation
+    #[serde(default)]
+    #[schemars(description = "Directories to search during qmod creation.")]
+    pub search_dirs: Vec<PathBuf>,
+
+    /// Files to include in the resulting qmod
+    #[serde(default)]
+    #[schemars(description = "Files to include in the resulting qmod.")]
+    pub include_files: Vec<PathBuf>,
+
+    /// Download URL used in the generated mod.json
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[schemars(description = "Download URL used in the generated mod.json.")]
+    pub download_url: Option<String>,
+
+    /// QMod ID for this package
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[schemars(description = "QMod ID for this package.")]
+    pub id: Option<String>,
+}
+
+impl QmodConfig {
+    fn is_empty(&self) -> bool {
+        self.output.is_none()
+            && self.template.is_none()
+            && self.search_dirs.is_empty()
+            && self.include_files.is_empty()
+            && self.download_url.is_none()
+            && self.id.is_none()
+    }
+}
+
 #[derive(
     Serialize, Deserialize, Clone, Debug, JsonSchema, Default, PartialEq, Eq, Hash, PartialOrd, Ord,
 )]
 pub struct DependencyId(pub String);
 
 /// Dependency ID -> Dependency
-pub type DependencyMap = HashMap<DependencyId, PackageDependency>;
-
-/// ENV -> VALUE
-pub type EnvironmentMap = HashMap<String, String>;
+pub type DependencyMap = std::collections::HashMap<DependencyId, PackageDependency>;
 
 // qpm.json
 #[derive(Serialize, Deserialize, JsonSchema, Clone, Debug, PartialEq, Eq)]
@@ -47,20 +91,27 @@ pub type EnvironmentMap = HashMap<String, String>;
 #[serde(rename_all = "camelCase")]
 #[schemars(description = "Configuration for a package.")]
 pub struct PackageConfig {
+    /// Config version, defaults to 2.0.0
+    #[serde(default = "default_ver")]
+    pub config_version: Version,
+
     /// Package ID
     pub id: DependencyId,
+
     /// Package version
     pub version: Version,
-    /// Directory where dependencies are restored
-    pub dependencies_directory: PathBuf,
-    /// Directories shared by the package
-    pub shared_directory: PathBuf,
-    /// Workspace configuration
-    #[serde(default)]
-    pub workspace: WorkspaceConfig,
+
     /// Additional package metadata
     #[serde(default)]
     pub additional_data: PackageAdditionalData,
+
+    /// Workspace configuration
+    #[serde(default)]
+    pub workspace: WorkspaceConfig,
+
+    /// QMod configuration
+    #[serde(default, skip_serializing_if = "QmodConfig::is_empty")]
+    pub qmod: QmodConfig,
 
     /// Dependencies for this package
     #[serde(default)]
@@ -70,68 +121,16 @@ pub struct PackageConfig {
     #[serde(default)]
     pub dev_dependencies: DependencyMap,
 
-    /// Environment variables for this package.
-    #[serde(default)]
-    pub env: EnvironmentMap,
+    /// Directory where dependencies are restored
+    pub dependencies_directory: PathBuf,
+
+    /// Directories shared by the package
+    pub shared_directory: PathBuf,
 
     /// Additional Compile options to be used with this package
     #[serde(skip_serializing_if = "Option::is_none")]
     #[schemars(description = "Additional compile options for the package.")]
     pub compile_options: Option<PackageCompileOptions>,
-
-    /// QMod URL for this package
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[schemars(description = "QMod URL for this package.")]
-    pub qmod_url: Option<String>,
-
-    /// QMod ID for this package
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[schemars(description = "QMod ID for this package.")]
-    pub qmod_id: Option<String>,
-
-    #[serde(default)]
-    #[schemars(description = "List of directories to search during qmod creation.")]
-    pub qmod_include_dirs: Vec<PathBuf>,
-
-    #[serde(default)]
-    #[schemars(description = "List of files to include in the resulting qmod.")]
-    pub qmod_include_files: Vec<PathBuf>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[schemars(description = "Output path for the qmod.")]
-    pub qmod_output: Option<PathBuf>,
-
-    /// QMod template path for this package e.g mod.template.json
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[schemars(description = "QMod template for this package.")]
-    pub qmod_template: Option<PathBuf>,
-
-    /// NDK Version Range
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[schemars(description = "The NDK version range.")]
-    #[schemars(schema_with = "make_version_req_schema")]
-    pub ndk: Option<VersionReq>,
-
-    /// Output binaries for this package
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[schemars(description = "Output binaries for this package.")]
-    pub out_binaries: Option<Vec<PathBuf>>,
-
-    /// Config version, defaults to 2.0.0
-    #[serde(default = "default_ver")]
-    pub config_version: Version,
-
-    /// Whether to generate the cmake files on restore
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[schemars(description = "Whether to generate CMake files on restore.")]
-    pub cmake: Option<bool>,
-
-    /// Whether to generate the a toolchain JSON file [CompileOptions] describing the project setup configuration
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[schemars(
-        description = "Path to generate a toolchain JSON file describing the project setup configuration."
-    )]
-    pub toolchain_out: Option<PathBuf>,
 }
 
 impl PackageConfig {
@@ -172,6 +171,10 @@ pub struct PackageAdditionalData {
     /// Package license
     #[serde(default)]
     pub license: String,
+    /// General URL for the mod
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[schemars(description = "General URL for the mod.")]
+    pub url: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, JsonSchema, Default, PartialEq, Eq)]
@@ -198,27 +201,17 @@ pub struct PackageDependency {
 impl Default for PackageConfig {
     fn default() -> Self {
         Self {
+            config_version: default_ver(),
             id: DependencyId::default(),
             version: default_ver(),
+            additional_data: PackageAdditionalData::default(),
+            workspace: WorkspaceConfig::default(),
+            qmod: QmodConfig::default(),
+            dependencies: DependencyMap::default(),
+            dev_dependencies: DependencyMap::default(),
             dependencies_directory: "extern".into(),
             shared_directory: "shared".into(),
-            workspace: Default::default(),
-            additional_data: PackageAdditionalData::default(),
-            dependencies: Default::default(),
-            dev_dependencies: Default::default(),
-            env: Default::default(),
             compile_options: None,
-            qmod_url: None,
-            qmod_id: None,
-            qmod_include_dirs: Default::default(),
-            qmod_include_files: Default::default(),
-            qmod_output: None,
-            qmod_template: None,
-            ndk: None,
-            out_binaries: None,
-            config_version: default_ver(),
-            cmake: None,
-            toolchain_out: None,
         }
     }
 }
