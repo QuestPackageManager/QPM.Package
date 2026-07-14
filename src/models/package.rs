@@ -188,14 +188,22 @@ pub struct PackageDependency {
     pub version_range: VersionReq,
 
     /// Whether to include this dependency in the qmod
-    #[serde(default)]
-    pub qmod_export: bool,
-
-    /// Whether this is required/optional in the qmod
-    /// QMod required field for this dependency
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[schemars(description = "QMod required field for this dependency.")]
-    pub qmod_required: Option<bool>,
+    pub qmod: Option<QmodDependencyMode>,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, JsonSchema, Default, PartialEq, Eq)]
+#[allow(non_snake_case)]
+#[serde(rename_all = "camelCase")]
+#[schemars(description = "QMod dependency flag")]
+pub enum QmodDependencyMode {
+    /// Do not include the dependency in the resulting QMod
+    None,
+    /// The dependency is required for the QMod
+    #[default]
+    Required,
+    /// The dependency is optional for the QMod
+    Optional
 }
 
 impl Default for PackageConfig {
