@@ -190,6 +190,10 @@ pub struct PackageDependency {
     /// Whether to include this dependency in the qmod
     #[serde(skip_serializing_if = "Option::is_none")]
     pub qmod: Option<QmodDependencyMode>,
+
+    /// The URL to download the dependency from. Useful for nightly/bleeding edge usage.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub qpkg_url: Option<String>
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, JsonSchema, Default, PartialEq, Eq)]

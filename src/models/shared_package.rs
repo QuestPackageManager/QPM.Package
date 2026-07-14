@@ -35,6 +35,12 @@ pub struct SharedDependencyInfo {
     #[schemars(description = "Version of the dependency.")]
     pub restored_version: Version,
 
+    /// The URL to download the dependency from. Useful for nightly/bleeding edge usage.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub qpkg_url: Option<String>,
+
+    // TODO: Checksum?
+
     /// Binaries restored for this dependency
     #[schemars(description = "Binaries for this dependency.")]
     pub restored_binaries: Vec<PathBuf>,
