@@ -6,7 +6,6 @@
   "required": [
     "dependenciesDirectory",
     "id",
-    "ndk",
     "sharedDirectory",
     "version"
   ],
@@ -22,13 +21,6 @@
         {
           "$ref": "#/definitions/PackageAdditionalData"
         }
-      ]
-    },
-    "cmake": {
-      "description": "Whether to generate CMake files on restore.",
-      "type": [
-        "boolean",
-        "null"
       ]
     },
     "compileOptions": {
@@ -68,14 +60,6 @@
         "$ref": "#/definitions/PackageDependency"
       }
     },
-    "env": {
-      "description": "Environment variables for this package.",
-      "default": {},
-      "type": "object",
-      "additionalProperties": {
-        "type": "string"
-      }
-    },
     "id": {
       "description": "Package ID",
       "allOf": [
@@ -84,80 +68,17 @@
         }
       ]
     },
-    "ndk": {
-      "description": "The NDK version range.",
-      "type": "string",
-      "properties": {
-        "format": {
-          "title": "String",
-          "type": "string"
+    "qmod": {
+      "description": "QMod configuration",
+      "allOf": [
+        {
+          "$ref": "#/definitions/QmodConfig"
         }
-      }
-    },
-    "outBinaries": {
-      "description": "Output binaries for this package.",
-      "type": [
-        "array",
-        "null"
-      ],
-      "items": {
-        "type": "string"
-      }
-    },
-    "qmodId": {
-      "description": "QMod ID for this package.",
-      "type": [
-        "string",
-        "null"
-      ]
-    },
-    "qmodIncludeDirs": {
-      "description": "List of directories to search during qmod creation.",
-      "default": [],
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "qmodIncludeFiles": {
-      "description": "List of files to include in the resulting qmod.",
-      "default": [],
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "qmodOutput": {
-      "description": "Output path for the qmod.",
-      "type": [
-        "string",
-        "null"
-      ]
-    },
-    "qmodTemplate": {
-      "description": "QMod template for this package.",
-      "type": [
-        "string",
-        "null"
-      ]
-    },
-    "qmodUrl": {
-      "description": "QMod URL for this package.",
-      "type": [
-        "string",
-        "null"
       ]
     },
     "sharedDirectory": {
       "description": "Directories shared by the package",
       "type": "string"
-    },
-    "toolchainOut": {
-      "description": "Path to generate a toolchain JSON file describing the project setup configuration.",
-      "type": [
-        "string",
-        "null"
-      ]
     },
     "version": {
       "description": "Package version",
@@ -197,6 +118,13 @@
           "description": "Package license",
           "default": "",
           "type": "string"
+        },
+        "url": {
+          "description": "General URL for the mod.",
+          "type": [
+            "string",
+            "null"
+          ]
         }
       }
     },
@@ -253,15 +181,21 @@
         "versionRange"
       ],
       "properties": {
-        "qmodExport": {
+        "qmod": {
           "description": "Whether to include this dependency in the qmod",
-          "default": false,
-          "type": "boolean"
+          "anyOf": [
+            {
+              "$ref": "#/definitions/QmodDependencyMode"
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
-        "qmodRequired": {
-          "description": "QMod required field for this dependency.",
+        "qpkgUrl": {
+          "description": "The URL to download the dependency from. Useful for nightly/bleeding edge usage.",
           "type": [
-            "boolean",
+            "string",
             "null"
           ]
         },
@@ -277,10 +211,126 @@
         }
       }
     },
+    "QmodConfig": {
+      "description": "QMod package configuration.",
+      "type": "object",
+      "properties": {
+        "downloadUrl": {
+          "description": "Download URL used in the generated mod.json.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "description": "QMod ID for this package.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "includeFiles": {
+          "description": "Files to include in the resulting qmod.",
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "output": {
+          "description": "The output name of the QMOD, default to something based on the package ID.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "searchDirs": {
+          "description": "Directories to search during qmod creation.",
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "template": {
+          "description": "The template path for the mod.json, default to mod.template.json.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "QmodDependencyMode": {
+      "description": "QMod dependency flag",
+      "oneOf": [
+        {
+          "description": "Do not include the dependency in the resulting QMod",
+          "type": "string",
+          "enum": [
+            "none"
+          ]
+        },
+        {
+          "description": "The dependency is required for the QMod",
+          "type": "string",
+          "enum": [
+            "required"
+          ]
+        },
+        {
+          "description": "The dependency is optional for the QMod",
+          "type": "string",
+          "enum": [
+            "optional"
+          ]
+        }
+      ]
+    },
     "WorkspaceConfig": {
       "description": "Configuration for the workspace.",
       "type": "object",
+      "required": [
+        "ndk"
+      ],
       "properties": {
+        "cmake": {
+          "description": "Whether to generate CMake files on restore.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "env": {
+          "description": "Environment variables for the workspace.",
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "ndk": {
+          "description": "NDK version range requirement.",
+          "type": "string",
+          "properties": {
+            "format": {
+              "title": "String",
+              "type": "string"
+            }
+          }
+        },
+        "outBinaries": {
+          "description": "Output binaries for this package.",
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
         "scripts": {
           "description": "Scripts associated with the workspace.",
           "default": {},
@@ -291,6 +341,13 @@
               "type": "string"
             }
           }
+        },
+        "toolchainOut": {
+          "description": "Path to generate a toolchain JSON file describing the project setup configuration.",
+          "type": [
+            "string",
+            "null"
+          ]
         }
       }
     }
