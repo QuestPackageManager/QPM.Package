@@ -1,12 +1,14 @@
-use std::{collections::BTreeMap, path::PathBuf};
+use std::collections::BTreeMap;
+use std::path::PathBuf;
 
 use schemars::JsonSchema;
 use semver::VersionReq;
 use serde::{Deserialize, Serialize};
 
-use crate::models::version_req::make_version_req_schema;
+use super::version_req::make_version_req_schema;
 
 pub type WorkspaceScript = Vec<String>;
+pub type EnvironmentMap = std::collections::HashMap<String, String>;
 
 /// qpm.json::workspace
 #[derive(Serialize, Deserialize, JsonSchema, Clone, Debug, PartialEq, Eq, Default)]
@@ -18,21 +20,29 @@ pub struct WorkspaceConfig {
     #[schemars(description = "Scripts associated with the workspace.")]
     pub scripts: BTreeMap<String, WorkspaceScript>,
 
-    /// NDK Version Range
+    /// Environment variables for the workspace
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[schemars(description = "The NDK version range.")]
+    #[schemars(description = "Environment variables for the workspace.")]
+    pub env: Option<EnvironmentMap>,
+
+    /// NDK version range requirement
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[schemars(description = "NDK version range requirement.")]
     #[schemars(schema_with = "make_version_req_schema")]
     pub ndk: Option<VersionReq>,
 
-    #[serde(default)]
-    #[schemars(description = "List of directories to search during qmod creation.")]
-    pub qmod_include_dirs: Vec<PathBuf>,
+    /// Output binaries for this package
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[schemars(description = "Output binaries for this package.")]
+    pub out_binaries: Option<Vec<PathBuf>>,
 
-    #[serde(default)]
-    #[schemars(description = "List of files to include in the resulting qmod.")]
-    pub qmod_include_files: Vec<PathBuf>,
+    /// Path to generate a toolchain JSON file describing the project setup configuration
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[schemars(description = "Path to generate a toolchain JSON file describing the project setup configuration.")]
+    pub toolchain_out: Option<PathBuf>,
 
-    #[serde(default)]
-    #[schemars(description = "Output path for the qmod.")]
-    pub qmod_output: Option<PathBuf>,
+    /// Whether to generate the cmake files on restore
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[schemars(description = "Whether to generate CMake files on restore.")]
+    pub cmake: Option<bool>,
 }
