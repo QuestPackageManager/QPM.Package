@@ -39,7 +39,11 @@ pub struct SharedDependencyInfo {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub qpkg_url: Option<String>,
 
-    // TODO: Checksum?
+    /// The sha256 checksum of the restored QPKG's content, if known. Lets a restore recognize
+    /// an already-cached copy without re-downloading it, and detect when the content behind a
+    /// dependency has changed since it was last resolved.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub qpkg_checksum: Option<String>,
 
     /// Binaries restored for this dependency
     #[schemars(description = "Binaries for this dependency.")]

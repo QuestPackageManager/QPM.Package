@@ -329,6 +329,13 @@
         "restoredVersion"
       ],
       "properties": {
+        "qpkgChecksum": {
+          "description": "The sha256 checksum of the restored QPKG's content, if known. Lets a restore recognize an already-cached copy without re-downloading it, and detect when the content behind a dependency has changed since it was last resolved.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "qpkgUrl": {
           "description": "The URL to download the dependency from. Useful for nightly/bleeding edge usage.",
           "type": [
