@@ -12,7 +12,7 @@ pub const QPKG_JSON: &str = "qpm2.qpkg.json";
 #[allow(non_snake_case)]
 #[serde(rename_all = "camelCase")]
 #[schemars(description = "QPKG package. Distributes a package with its binaries and headers.")]
-pub struct QPkg {
+pub struct QpkgManifest {
     /// Package configuration
     #[schemars(description = "Package configuration")]
     pub config: PackageConfig,
