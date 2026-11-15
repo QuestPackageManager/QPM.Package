@@ -18,10 +18,12 @@ pub struct QpkgManifest {
     pub config: PackageConfig,
 
     /// The directory where the headers are located
+    #[serde(serialize_with = "super::paths::path")]
     #[schemars(description = "The directory where the headers are located")]
     pub shared_dir: PathBuf,
 
     /// Paths to the binary files, relative to the qpkg root
+    #[serde(serialize_with = "super::paths::paths")]
     #[schemars(description = "Paths to the binary files, relative to the qpkg root")]
     pub files: Vec<PathBuf>,
 }
