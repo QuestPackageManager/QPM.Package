@@ -9,3 +9,4 @@ pub mod qpackages;
 pub mod qpkg;
 
 mod version_req;
+mod paths;

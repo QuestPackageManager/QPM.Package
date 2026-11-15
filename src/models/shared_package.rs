@@ -46,6 +46,7 @@ pub struct SharedDependencyInfo {
     pub qpkg_checksum: Option<String>,
 
     /// Binaries restored for this dependency
+    #[serde(serialize_with = "super::paths::paths")]
     #[schemars(description = "Binaries for this dependency.")]
     pub restored_binaries: Vec<PathBuf>,
 

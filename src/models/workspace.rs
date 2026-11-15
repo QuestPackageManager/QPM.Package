@@ -33,11 +33,13 @@ pub struct WorkspaceConfig {
 
     /// Output binaries for this package
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(serialize_with = "super::paths::optional_paths")]
     #[schemars(description = "Output binaries for this package.")]
     pub out_binaries: Option<Vec<PathBuf>>,
 
     /// Path to generate a toolchain JSON file describing the project setup configuration
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(serialize_with = "super::paths::optional_path")]
     #[schemars(description = "Path to generate a toolchain JSON file describing the project setup configuration.")]
     pub toolchain_out: Option<PathBuf>,
 

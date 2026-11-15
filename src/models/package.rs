@@ -37,21 +37,23 @@ pub const QPM_ENV_GAME_VERSION: &str = "QMOD_GAME_VERSION";
 pub struct QmodConfig {
     /// The output name of the QMOD file
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(serialize_with = "super::paths::optional_path")]
     #[schemars(description = "The output name of the QMOD, default to something based on the package ID.")]
     pub output: Option<PathBuf>,
 
     /// The template path for the mod.json
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(serialize_with = "super::paths::optional_path")]
     #[schemars(description = "The template path for the mod.json, default to mod.template.json.")]
     pub template: Option<PathBuf>,
 
     /// Directories to search during qmod creation
-    #[serde(default)]
+    #[serde(default, serialize_with = "super::paths::paths")]
     #[schemars(description = "Directories to search during qmod creation.")]
     pub search_dirs: Vec<PathBuf>,
 
     /// Files to include in the resulting qmod
-    #[serde(default)]
+    #[serde(default, serialize_with = "super::paths::paths")]
     #[schemars(description = "Files to include in the resulting qmod.")]
     pub include_files: Vec<PathBuf>,
 
@@ -122,9 +124,11 @@ pub struct PackageConfig {
     pub dev_dependencies: DependencyMap,
 
     /// Directory where dependencies are restored
+    #[serde(serialize_with = "super::paths::path")]
     pub dependencies_directory: PathBuf,
 
     /// Directories shared by the package
+    #[serde(serialize_with = "super::paths::path")]
     pub shared_directory: PathBuf,
 
     /// Additional Compile options to be used with this package
