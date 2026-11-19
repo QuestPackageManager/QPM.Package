@@ -23,7 +23,7 @@ pub struct QpkgManifest {
     pub shared_dir: PathBuf,
 
     /// Paths to the binary files, relative to the qpkg root
-    #[serde(serialize_with = "super::paths::optional_path")]
-    #[schemars(description = "Path to the binary file, relative to the qpkg root")]
-    pub binary: Option<PathBuf>,
+    #[serde(serialize_with = "super::paths::paths")]
+    #[schemars(description = "Paths to the binary files, relative to the qpkg root")]
+    pub files: Vec<PathBuf>,
 }
