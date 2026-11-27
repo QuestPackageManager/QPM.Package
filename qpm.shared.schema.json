@@ -432,7 +432,7 @@
           }
         },
         "outBinaries": {
-          "description": "Output binaries for this package.",
+          "description": "Paths to the output binaries, relative to the directory containing qpm2.json.",
           "type": [
             "array",
             "null"
@@ -440,13 +440,6 @@
           "items": {
             "type": "string"
           }
-        },
-        "outBinariesDirectory": {
-          "description": "Checkout-relative base for outBinaries. Defaults to build/ under dependenciesDirectory.",
-          "type": [
-            "string",
-            "null"
-          ]
         },
         "scripts": {
           "description": "Scripts associated with the workspace.",

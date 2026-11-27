@@ -31,19 +31,13 @@ pub struct WorkspaceConfig {
     #[schemars(schema_with = "make_version_req_schema")]
     pub ndk: Option<VersionReq>,
 
-    /// Output binaries for this package
+    /// Paths to the output binaries, relative to the directory containing qpm2.json.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(serialize_with = "super::paths::optional_paths")]
-    #[schemars(description = "Output binaries for this package.")]
-    pub out_binaries: Option<Vec<PathBuf>>,
-
-    /// Checkout-relative base directory for QPKG binaries.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(serialize_with = "super::paths::optional_path")]
     #[schemars(
-        description = "Checkout-relative base for outBinaries. Defaults to build/ under dependenciesDirectory."
+        description = "Paths to the output binaries, relative to the directory containing qpm2.json."
     )]
-    pub out_binaries_directory: Option<PathBuf>,
+    pub out_binaries: Option<Vec<PathBuf>>,
 
     /// Optional QPKG header selection and installed path prefix.
     #[serde(skip_serializing_if = "Option::is_none")]
