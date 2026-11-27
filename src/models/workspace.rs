@@ -31,11 +31,17 @@ pub struct WorkspaceConfig {
     #[schemars(schema_with = "make_version_req_schema")]
     pub ndk: Option<VersionReq>,
 
-    /// Output binaries for this package
+    /// Paths to the output binaries, relative to the directory containing qpm2.json.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(serialize_with = "super::paths::optional_paths")]
-    #[schemars(description = "Output binaries for this package.")]
+    #[schemars(
+        description = "Paths to the output binaries, relative to the directory containing qpm2.json."
+    )]
     pub out_binaries: Option<Vec<PathBuf>>,
+
+    /// Optional QPKG header selection and installed path prefix.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub header_export: Option<HeaderExportConfig>,
 
     /// Path to generate a toolchain JSON file describing the project setup configuration
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -47,4 +53,22 @@ pub struct WorkspaceConfig {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[schemars(description = "Whether to generate CMake files on restore.")]
     pub cmake: Option<bool>,
+}
+
+#[derive(Serialize, Deserialize, JsonSchema, Clone, Debug, PartialEq, Eq, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct HeaderExportConfig {
+    /// Prefix under the dependency's restored include directory.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(serialize_with = "super::paths::optional_path")]
+    #[schemars(description = "Optional prefix inside the restored include directory.")]
+    pub prefix: Option<PathBuf>,
+
+    /// Files and directory trees to export, relative to sharedDirectory.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(serialize_with = "super::paths::optional_paths")]
+    #[schemars(
+        description = "Files and directory trees relative to sharedDirectory. Defaults to the entire shared directory."
+    )]
+    pub paths: Option<Vec<PathBuf>>,
 }

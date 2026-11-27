@@ -101,6 +101,28 @@
     "DependencyId": {
       "type": "string"
     },
+    "HeaderExportConfig": {
+      "type": "object",
+      "properties": {
+        "paths": {
+          "description": "Files and directory trees relative to sharedDirectory. Defaults to the entire shared directory.",
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "prefix": {
+          "description": "Optional prefix inside the restored include directory.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
     "PackageAdditionalData": {
       "type": "object",
       "properties": {
@@ -311,6 +333,17 @@
             "type": "string"
           }
         },
+        "headerExport": {
+          "description": "Optional QPKG header selection and installed path prefix.",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/HeaderExportConfig"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "ndk": {
           "description": "NDK version range requirement.",
           "type": "string",
@@ -322,7 +355,7 @@
           }
         },
         "outBinaries": {
-          "description": "Output binaries for this package.",
+          "description": "Paths to the output binaries, relative to the directory containing qpm2.json.",
           "type": [
             "array",
             "null"
